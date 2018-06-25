@@ -1,0 +1,25 @@
+PODS:
+  - MetalPetal (0.5.6):
+    - MetalPetal/Core (= 0.5.6)
+  - MetalPetal/Core (0.5.6)
+  - MetalPetalJS (0.1.0):
+    - MetalPetal
+
+DEPENDENCIES:
+  - MetalPetalJS (from `../`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - MetalPetal
+
+EXTERNAL SOURCES:
+  MetalPetalJS:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  MetalPetal: 7e1c595b0dbcdc94175d8e7ec2544fd97394c546
+  MetalPetalJS: 759aaf94eeca1aea37337394b120a4afcadb69b3
+
+PODFILE CHECKSUM: 3dc712f8046fdc8b89c58c5689301050200676f8
+
+COCOAPODS: 1.5.3

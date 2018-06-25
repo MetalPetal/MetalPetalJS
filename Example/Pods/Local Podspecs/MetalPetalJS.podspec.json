@@ -1,0 +1,29 @@
+{
+  "name": "MetalPetalJS",
+  "version": "0.1.0",
+  "summary": "A short description of MetalPetalJS.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/MetalPetal/MetalPetalJS",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "yuao": "me@imyuao.com"
+  },
+  "source": {
+    "git": "https://github.com/MetalPetal/MetalPetalJS.git",
+    "tag": "0.1.0"
+  },
+  "requires_arc": true,
+  "prefix_header_file": false,
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source_files": "MetalPetalJS/Classes/**/*",
+  "dependencies": {
+    "MetalPetal": [
+
+    ]
+  }
+}

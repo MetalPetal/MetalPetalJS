@@ -1,0 +1,6 @@
+framework module MetalPetalJS {
+  umbrella header "MetalPetalJS-umbrella.h"
+
+  export *
+  module * { export * }
+}
