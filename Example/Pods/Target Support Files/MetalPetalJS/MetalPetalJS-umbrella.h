@@ -17,6 +17,7 @@
 #import "MTIRenderCommandJSSupport.h"
 #import "MTISIMDTypeKVCSupport.h"
 #import "MTIVectorJSSupport.h"
+#import "MTIVerticesJSSupport.h"
 
 FOUNDATION_EXPORT double MetalPetalJSVersionNumber;
 FOUNDATION_EXPORT const unsigned char MetalPetalJSVersionString[];
