@@ -21,9 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*
  {
- "vertexFunction": "vertex",
- "fragmentFunction": "frag",
- "library": "/var/private/..../default.metallib"
+ "vertexFunction": { "name": "vertex", "library": "/var/private/..../default.metallib"},
+ "fragmentFunction": { "name": "frag"}, // if library is null means it is from in MetalPetal's default metalib.
  }
  */
 
@@ -33,11 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*
  {
- "computeFunction": "comp",
- "library": "/var/private/..../default.metallib"
+ "computeFunction": { "name": "compute", "library": "/var/private/..../default.metallib"},
  }
  */
-
 @end
 
 @interface MTIMPSKernel (JSSupport) <MTIKernelJSSupport>
