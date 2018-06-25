@@ -37,6 +37,12 @@
     [MTIImage mti_exportToJSContext:context];
     [MTIJSEnvironment mti_exportToJSContext:context];
     [MTIFilterJSSupport exportToContext:context];
+    [MTIRenderPipelineKernel mti_exportToJSContext:context];
+    [MTIComputePipelineKernel mti_exportToJSContext:context];
+    [MTIMPSKernel mti_exportToJSContext:context];
+    [MTIRenderCommand mti_exportToJSContext:context];
+    [MTIVertices mti_exportToJSContext:context];
+    [MTIVector mti_exportToJSContext:context];
 }
     
 @end
