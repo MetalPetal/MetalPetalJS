@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <JavascriptCore/JavascriptCore.h>
+#import <MetalPetal/MetalPetal.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +22,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MTIJSExtension : NSObject
 
 + (void)exportToJSContext:(JSContext *)context;
+
+@end
+
+@interface JSValue (MTIJSExtension)
+
++ (JSValue *)valueWithMTITextureDimensions:(MTITextureDimensions)dimensions inContext:(JSContext *)context;
+
+- (MTITextureDimensions)toMTITextureDimensions;
+
++ (JSValue *)valueWithMTIColor:(MTIColor)color inContext:(JSContext *)context;
+
+- (MTIColor)toMTIColor;
 
 @end
 

@@ -53,11 +53,3 @@ static MTIAlphaTypeHandlingRule *MTIAlphaTypeHandlingRuleFrom(NSDictionary *JSON
 }
 
 @end
-
-@implementation MTIMPSKernel (JSSupport)
-
-+ (nullable instancetype)kernelWithJSONDescriptor:(NSDictionary *)JSONDescriptor {
-    return nil;
-}
-
-@end

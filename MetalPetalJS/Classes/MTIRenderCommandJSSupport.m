@@ -25,4 +25,8 @@
     return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:MTITextureDimensionsMake2DFromCGSize(size) pixelFormat:pixelFormat loadAction:loadAction];
 }
 
++ (instancetype)renderPassOutputDescriptorWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction storeAction:(MTLStoreAction)storeAction {
+    return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:dimensions pixelFormat:pixelFormat loadAction:loadAction storeAction:storeAction];
+}
+
 @end

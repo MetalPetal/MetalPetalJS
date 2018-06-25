@@ -34,9 +34,9 @@
                          @"alphaIsOne": @(MTIAlphaTypeAlphaIsOne)}
      forKeyedSubscript:@"MTIAlphaType"];
     
+    [MTIFilterJSSupport exportToContext:context];
     [MTIImage mti_exportToJSContext:context];
     [MTIJSEnvironment mti_exportToJSContext:context];
-    [MTIFilterJSSupport exportToContext:context];
     [MTIRenderPipelineKernel mti_exportToJSContext:context];
     [MTIComputePipelineKernel mti_exportToJSContext:context];
     [MTIMPSKernel mti_exportToJSContext:context];
@@ -46,6 +46,42 @@
     [MTIRenderPassOutputDescriptor mti_exportToJSContext:context];
 }
     
+@end
+
+@implementation JSValue (MTIJSExtension)
+
++ (JSValue *)valueWithMTITextureDimensions:(MTITextureDimensions)dimensions inContext:(JSContext *)context {
+    return [JSValue valueWithObject:@{@"width": @(dimensions.width),
+                                      @"height": @(dimensions.height),
+                                      @"depth": @(dimensions.depth)}
+                          inContext:context];
+}
+
+- (MTITextureDimensions)toMTITextureDimensions {
+    return (MTITextureDimensions){
+        .width = [self[@"width"] toUInt32],
+        .height = [self[@"height"] toUInt32],
+        .depth = [self[@"depth"] toUInt32]
+    };
+}
+
++ (JSValue *)valueWithMTIColor:(MTIColor)color inContext:(JSContext *)context {
+    return [JSValue valueWithObject:@{@"red": @(color.red),
+                                      @"green": @(color.green),
+                                      @"blue": @(color.blue),
+                                      @"alpha": @(color.alpha)}
+                          inContext:context];
+}
+
+- (MTIColor)toMTIColor {
+    return (MTIColor){
+        .red = [self[@"red"] toDouble],
+        .green = [self[@"green"] toDouble],
+        .blue = [self[@"blue"] toDouble],
+        .alpha = [self[@"alpha"] toDouble]
+    };
+}
+
 @end
 
 @implementation NSObject (MTIJSExtension)

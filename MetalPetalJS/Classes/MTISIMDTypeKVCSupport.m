@@ -7,6 +7,3 @@
 
 #import "MTISIMDTypeKVCSupport.h"
 
-@implementation MTISIMDTypeKVCSupport
-
-@end

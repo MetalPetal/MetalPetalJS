@@ -28,20 +28,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MTIComputePipelineKernel (JSSupport) <MTIKernelJSSupport>
+@protocol MTIComputePipelineKernelJSSupport <MTIKernelJSSupport>
+
+- (MTIImage *)applyToInputImages:(NSArray<MTIImage *> *)images
+                      parameters:(NSDictionary<NSString *,id> *)parameters
+         outputTextureDimensions:(MTITextureDimensions)outputTextureDimensions
+               outputPixelFormat:(MTLPixelFormat)outputPixelFormat;
+
+@end
+
+@interface MTIComputePipelineKernel (JSSupport) <MTIComputePipelineKernelJSSupport>
 
 /*
  {
  "computeFunction": { "name": "compute", "library": "/var/private/..../default.metallib"},
- }
- */
-@end
-
-@interface MTIMPSKernel (JSSupport) <MTIKernelJSSupport>
-
-/*
- {
- "MPSKernel": "MPSImageGaussianBlur"
  }
  */
 

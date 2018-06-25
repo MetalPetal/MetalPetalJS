@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable instancetype)imageWithContentsOfFile:(NSString *)filePath options:(nullable NSDictionary<MTKTextureLoaderOption,id> *)options alphaType:(MTIAlphaType)alphaType;
 
++ (instancetype)imageWithColor:(MTIColor)color sRGB:(BOOL)sRGB size:(CGSize)size;
+
 @end
 
 @interface MTIImage (JSSupport) <MTIImageJSSupport>

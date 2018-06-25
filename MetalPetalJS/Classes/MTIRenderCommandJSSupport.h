@@ -45,6 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)renderPassOutputDescriptorWithSize:(CGSize)size pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction;
 
++ (instancetype)renderPassOutputDescriptorWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction storeAction:(MTLStoreAction)storeAction;
+
 @end
 
 @interface MTIRenderCommand (JSSupport) <MTIRenderCommandJSSupport>
