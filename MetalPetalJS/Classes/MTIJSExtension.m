@@ -34,6 +34,10 @@
                          @"alphaIsOne": @(MTIAlphaTypeAlphaIsOne)}
      forKeyedSubscript:@"MTIAlphaType"];
     
+    [context setObject:@{@"transient": @(MTIImageCachePolicyTransient),
+                         @"persistent": @(MTIImageCachePolicyPersistent)}
+     forKeyedSubscript:@"MTIImageCachePolicy"];
+    
     [MTIFilterJSSupport exportToContext:context];
     [MTIImage mti_exportToJSContext:context];
     [MTIJSEnvironment mti_exportToJSContext:context];
