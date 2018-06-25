@@ -27,6 +27,11 @@
 @implementation MTIJSExtension
 
 + (void)exportToJSContext:(JSContext *)context {
+    [context setObject:@{@"unknown": @(MTIAlphaTypeUnknown),
+                         @"nonPremultiplied": @(MTIAlphaTypeNonPremultiplied),
+                         @"premultiplied": @(MTIAlphaTypePremultiplied),
+                         @"alphaIsOne": @(MTIAlphaTypeAlphaIsOne)}
+     forKeyedSubscript:@"MTIAlphaType"];
     [MTIImage mti_exportToJSContext:context];
     [MTIJSEnvironment mti_exportToJSContext:context];
 }

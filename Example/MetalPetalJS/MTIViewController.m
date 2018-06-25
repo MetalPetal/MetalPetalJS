@@ -19,19 +19,13 @@
 
 @implementation MTIViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.jsVirtualMachine = [[JSVirtualMachine alloc] init];
     self.jsContext = [[JSContext alloc] initWithVirtualMachine:self.jsVirtualMachine];
     [MTIJSExtension exportToJSContext:self.jsContext];
-    [self.jsContext evaluateScript:@"console.log(MTIImage);"];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    [self.jsContext evaluateScript:[NSString stringWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"script" withExtension:@"js"] encoding:NSUTF8StringEncoding error:nil]];
 }
 
 @end
