@@ -7,8 +7,13 @@
 //
 
 #import "MTIViewController.h"
+@import JavaScriptCore;
+@import MetalPetalJS;
 
 @interface MTIViewController ()
+
+@property (nonatomic, strong) JSVirtualMachine *jsVirtualMachine;
+@property (nonatomic, strong) JSContext *jsContext;
 
 @end
 
@@ -17,7 +22,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    self.jsVirtualMachine = [[JSVirtualMachine alloc] init];
+    self.jsContext = [[JSContext alloc] initWithVirtualMachine:self.jsVirtualMachine];
+    [MTIJSExtension exportToJSContext:self.jsContext];
+    [self.jsContext evaluateScript:@"console.log(MTIImage);"];
 }
 
 - (void)didReceiveMemoryWarning
