@@ -13,6 +13,8 @@
 #import "MTIFilterJSSupport.h"
 #import "MTIImageJSSupport.h"
 #import "MTIJSExtension.h"
+#import "MTIKernelJSSupport.h"
+#import "MTIRenderCommandJSSupport.h"
 #import "MTISIMDTypeKVCSupport.h"
 #import "MTIVectorJSSupport.h"
 
