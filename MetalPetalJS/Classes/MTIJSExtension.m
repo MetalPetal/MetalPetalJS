@@ -7,6 +7,7 @@
 
 #import "MTIJSExtension.h"
 #import "MTIImageJSSupport.h"
+#import "MTIFilterJSSupport.h"
 
 @interface MTIJSEnvironment: NSObject <MTIJSEnvironment>
 
@@ -32,8 +33,10 @@
                          @"premultiplied": @(MTIAlphaTypePremultiplied),
                          @"alphaIsOne": @(MTIAlphaTypeAlphaIsOne)}
      forKeyedSubscript:@"MTIAlphaType"];
+    
     [MTIImage mti_exportToJSContext:context];
     [MTIJSEnvironment mti_exportToJSContext:context];
+    [MTIFilterJSSupport exportToContext:context];
 }
     
 @end

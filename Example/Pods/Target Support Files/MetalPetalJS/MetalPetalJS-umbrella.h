@@ -10,6 +10,7 @@
 #endif
 #endif
 
+#import "MTIFilterJSSupport.h"
 #import "MTIImageJSSupport.h"
 #import "MTIJSExtension.h"
 #import "MTISIMDTypeKVCSupport.h"
