@@ -6,7 +6,49 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <JavascriptCore/JavascriptCore.h>
+#import <MetalPetal/MetalPetal.h>
 
-@interface MTIKernelJSSupport : NSObject
+NS_ASSUME_NONNULL_BEGIN
+
+@protocol MTIKernelJSSupport <JSExport>
+
++ (nullable instancetype)kernelWithJSONDescriptor:(NSDictionary *)JSONDescriptor;
 
 @end
+
+@interface MTIRenderPipelineKernel (JSSupport) <MTIKernelJSSupport>
+
+/*
+ {
+ "vertexFunction": "vertex",
+ "fragmentFunction": "frag",
+ "library": "/var/private/..../default.metallib"
+ }
+ */
+
+@end
+
+@interface MTIComputePipelineKernel (JSSupport) <MTIKernelJSSupport>
+
+/*
+ {
+ "computeFunction": "comp",
+ "library": "/var/private/..../default.metallib"
+ }
+ */
+
+@end
+
+@interface MTIMPSKernel (JSSupport) <MTIKernelJSSupport>
+
+/*
+ {
+ "MPSKernel": "MPSImageGaussianBlur"
+ }
+ */
+
+@end
+
+NS_ASSUME_NONNULL_END
+

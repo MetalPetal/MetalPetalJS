@@ -6,7 +6,3 @@
 //
 
 #import "MTIKernelJSSupport.h"
-
-@implementation MTIKernelJSSupport
-
-@end

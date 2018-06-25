@@ -7,6 +7,3 @@
 
 #import "MTIRenderCommandJSSupport.h"
 
-@implementation MTIRenderCommandJSSupport
-
-@end
