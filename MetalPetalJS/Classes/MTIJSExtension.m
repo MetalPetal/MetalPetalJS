@@ -43,6 +43,7 @@
     [MTIRenderCommand mti_exportToJSContext:context];
     [MTIVertices mti_exportToJSContext:context];
     [MTIVector mti_exportToJSContext:context];
+    [MTIRenderPassOutputDescriptor mti_exportToJSContext:context];
 }
     
 @end

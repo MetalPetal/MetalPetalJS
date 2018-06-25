@@ -36,6 +36,11 @@
     
     JSValue *jsImage = [self.jsContext evaluateScript:[NSString stringWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"script" withExtension:@"js"] encoding:NSUTF8StringEncoding error:nil]];
     MTIImage *image = [jsImage toObjectOfClass:[MTIImage class]];
+    
+    if(self.jsContext.exception) {
+        NSLog(@"%@", self.jsContext.exception);
+    }
+    
     self.imageView.image = image;
 }
 

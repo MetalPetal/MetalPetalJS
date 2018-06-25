@@ -26,6 +26,7 @@
 		6003F5BC195388D20070C39A /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5BB195388D20070C39A /* Tests.m */; };
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
+		FA42964F20E0E304009E9C05 /* shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = FA42964E20E0E304009E9C05 /* shader.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 		A23173EF14C76643D72F241F /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		BEA148168283A5D3B00BF908 /* Pods_MetalPetalJS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MetalPetalJS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE1F2A4514B4E2D586E15017 /* Pods-MetalPetalJS_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MetalPetalJS_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MetalPetalJS_Tests/Pods-MetalPetalJS_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		FA42964E20E0E304009E9C05 /* shader.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shader.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				6003F5A6195388D20070C39A /* MTIViewController.m */,
 				06C418E920E0A4CC00503D47 /* script.js */,
 				06C418E720E0A2D400503D47 /* test.jpg */,
+				FA42964E20E0E304009E9C05 /* shader.metal */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -368,6 +371,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA42964F20E0E304009E9C05 /* shader.metal in Sources */,
 				6003F59E195388D20070C39A /* MTIAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* MTIViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
@@ -529,6 +533,7 @@
 				GCC_PREFIX_HEADER = "MetalPetalJS/MetalPetalJS-Prefix.pch";
 				INFOPLIST_FILE = "MetalPetalJS/MetalPetalJS-Info.plist";
 				MODULE_NAME = ExampleApp;
+				MTL_HEADER_SEARCH_PATHS = "${PODS_CONFIGURATION_BUILD_DIR}/MetalPetal/MetalPetal.framework/Headers";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -545,6 +550,7 @@
 				GCC_PREFIX_HEADER = "MetalPetalJS/MetalPetalJS-Prefix.pch";
 				INFOPLIST_FILE = "MetalPetalJS/MetalPetalJS-Info.plist";
 				MODULE_NAME = ExampleApp;
+				MTL_HEADER_SEARCH_PATHS = "${PODS_CONFIGURATION_BUILD_DIR}/MetalPetal/MetalPetal.framework/Headers";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

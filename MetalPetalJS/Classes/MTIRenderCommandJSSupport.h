@@ -41,9 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic,readonly) MTLStoreAction storeAction;
 
-+ (instancetype)renderPassOutputDescriptorinitWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat;
++ (instancetype)renderPassOutputDescriptorWithSize:(CGSize)size pixelFormat:(MTLPixelFormat)pixelFormat;
 
-+ (instancetype)renderPassOutputDescriptorinitWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction;
++ (instancetype)renderPassOutputDescriptorWithSize:(CGSize)size pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction;
 
 @end
 

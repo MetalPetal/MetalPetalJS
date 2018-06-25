@@ -12,9 +12,9 @@ static MTIFunctionDescriptor *MTIFunctionDescriptorFrom(NSDictionary *JSONObject
     NSString *name = functionDescriptor[@"name"];
     NSCParameterAssert(name);
     if (name.length) {
-        NSURL *libraryURL = functionDescriptor[@"library"];
-        if (libraryURL) {
-            return [[MTIFunctionDescriptor alloc] initWithName:name libraryURL:libraryURL];
+        NSString *libraryPath = functionDescriptor[@"library"];
+        if (libraryPath) {
+            return [[MTIFunctionDescriptor alloc] initWithName:name libraryURL:[NSURL fileURLWithPath:libraryPath]];
         } else {
             return [[MTIFunctionDescriptor alloc] initWithName:name];
         }

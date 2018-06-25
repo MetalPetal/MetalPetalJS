@@ -17,12 +17,12 @@
 
 @implementation MTIRenderPassOutputDescriptor (JSSupport)
 
-+ (instancetype)renderPassOutputDescriptorinitWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat {
-    return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:dimensions pixelFormat:pixelFormat];
++ (instancetype)renderPassOutputDescriptorWithSize:(CGSize)size pixelFormat:(MTLPixelFormat)pixelFormat {
+    return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:MTITextureDimensionsMake2DFromCGSize(size) pixelFormat:pixelFormat];
 }
 
-+ (instancetype)renderPassOutputDescriptorinitWithDimensions:(MTITextureDimensions)dimensions pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction {
-    return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:dimensions pixelFormat:pixelFormat loadAction:loadAction];
++ (instancetype)renderPassOutputDescriptorWithSize:(CGSize)size pixelFormat:(MTLPixelFormat)pixelFormat loadAction:(MTLLoadAction)loadAction {
+    return [[MTIRenderPassOutputDescriptor alloc] initWithDimensions:MTITextureDimensionsMake2DFromCGSize(size) pixelFormat:pixelFormat loadAction:loadAction];
 }
 
 @end
