@@ -34,6 +34,10 @@ JSExportAs(joinPath,
 
 - (MTIColor)toMTIColor;
 
++ (JSValue *)valueWithMTIColorMatrix:(MTIColorMatrix)colorMatrix inContext:(JSContext *)context;
+
+- (MTIColorMatrix)toMTIColorMatrix;
+
 @end
 
 @interface NSObject (MTIJSExtension)

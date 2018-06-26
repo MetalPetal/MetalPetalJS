@@ -8,6 +8,7 @@
 #import "MTIJSExtension.h"
 #import "MTIImageJSSupport.h"
 #import "MTIFilterJSSupport.h"
+#import "MTIVectorJSSupport.h"
 
 @interface MTIJSUtilities: NSObject <MTIJSUtilities>
 
@@ -85,6 +86,19 @@
         .green = [self[@"green"] toDouble],
         .blue = [self[@"blue"] toDouble],
         .alpha = [self[@"alpha"] toDouble]
+    };
+}
+
++ (JSValue *)valueWithMTIColorMatrix:(MTIColorMatrix)colorMatrix inContext:(JSContext *)context {
+    return [JSValue valueWithObject:@{@"matrix": [JSValue valueWithObject:[MTIVector vectorWithFloat4x4:colorMatrix.matrix] inContext:context],
+                                      @"bias": [JSValue valueWithObject:[MTIVector vectorWithFloat4:colorMatrix.bias] inContext:context]}
+                          inContext:context];
+}
+
+- (MTIColorMatrix)toMTIColorMatrix {
+    return (MTIColorMatrix){
+        .matrix = [[self[@"matrix"] toObjectOfClass:[MTIVector class]] float4x4Value],
+        .bias = [[self[@"bias"] toObjectOfClass:[MTIVector class]] float4Value]
     };
 }
 
