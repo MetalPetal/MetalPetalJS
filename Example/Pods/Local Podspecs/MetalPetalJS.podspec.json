@@ -21,6 +21,7 @@
     "ios": "9.0"
   },
   "source_files": "MetalPetalJS/Classes/**/*",
+  "resources": "MetalPetalJS/Assets/*.{png,js}",
   "dependencies": {
     "MetalPetal": [
 

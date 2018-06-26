@@ -11,11 +11,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol MTIJSEnvironment <JSExport>
+@protocol MTIJSUtilities <JSExport>
 
-@property (nonatomic, class, copy, readonly) NSString *mainBundlePath;
-
-+ (NSString *)pathByAppendingPathComponent:(NSString *)pathComponent toPath:(NSString *)path;
+JSExportAs(joinPath,
++ (NSString *)joinPath:(NSString *)path pathComponent:(NSString *)pathComponent);
 
 @end
 

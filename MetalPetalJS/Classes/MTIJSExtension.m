@@ -9,17 +9,13 @@
 #import "MTIImageJSSupport.h"
 #import "MTIFilterJSSupport.h"
 
-@interface MTIJSEnvironment: NSObject <MTIJSEnvironment>
+@interface MTIJSUtilities: NSObject <MTIJSUtilities>
 
 @end
 
-@implementation MTIJSEnvironment
+@implementation MTIJSUtilities
 
-+ (NSString *)mainBundlePath {
-    return [NSBundle mainBundle].bundlePath;
-}
-
-+ (NSString *)pathByAppendingPathComponent:(NSString *)pathComponent toPath:(NSString *)path {
++ (NSString *)joinPath:(NSString *)path pathComponent:(NSString *)pathComponent {
     return [path stringByAppendingPathComponent:pathComponent];
 }
 
@@ -38,9 +34,13 @@
                          @"persistent": @(MTIImageCachePolicyPersistent)}
      forKeyedSubscript:@"MTIImageCachePolicy"];
     
+    [context setObject:@{@"mainBundlePath": [NSBundle mainBundle].bundlePath,
+                         @"operatingSystemVersion": NSProcessInfo.processInfo.operatingSystemVersionString
+                         } forKeyedSubscript:@"MTIJSEnvironment"];
+    
+    [MTIJSUtilities mti_exportToJSContext:context];
     [MTIFilterJSSupport exportToContext:context];
     [MTIImage mti_exportToJSContext:context];
-    [MTIJSEnvironment mti_exportToJSContext:context];
     [MTIRenderPipelineKernel mti_exportToJSContext:context];
     [MTIComputePipelineKernel mti_exportToJSContext:context];
     [MTIMPSKernel mti_exportToJSContext:context];
@@ -48,6 +48,8 @@
     [MTIVertices mti_exportToJSContext:context];
     [MTIVector mti_exportToJSContext:context];
     [MTIRenderPassOutputDescriptor mti_exportToJSContext:context];
+    
+    [context evaluateScript:[NSString stringWithContentsOfURL:[[NSBundle bundleForClass:self] URLForResource:@"MetalPetal" withExtension:@"js"] encoding:NSUTF8StringEncoding error:nil]];
 }
     
 @end

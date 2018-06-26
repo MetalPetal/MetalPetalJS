@@ -1,10 +1,10 @@
 (function() {
  console.log(MTIImage);
  
- var kernel = MTIRenderPipelineKernel.kernelWithJSONDescriptor({ fragmentFunction: { name: "shader", library: MTIJSEnvironment.pathByAppendingPathComponentToPath("default.metallib", MTIJSEnvironment.mainBundlePath())},
+ var kernel = MTIRenderPipelineKernel.kernelWithJSONDescriptor({ fragmentFunction: { name: "shader", library: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath,"default.metallib")},
                                                                vertexFunction: { name: "passthroughVertex" }});
  
- var image = MTIImage.imageWithContentsOfFileOptionsAlphaType(MTIJSEnvironment.pathByAppendingPathComponentToPath("test.jpg", MTIJSEnvironment.mainBundlePath()), {MTKTextureLoaderOptionSRGB: false}, MTIAlphaType.alphaIsOne);
+ var image = MTIImage.imageWithContentsOfFileOptionsAlphaType(MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "test.jpg"), {MTKTextureLoaderOptionSRGB: false}, MTIAlphaType.alphaIsOne);
  
  /*
   var grayScaleFilter = MTINativeFilter.filterWithName("MTISaturationFilter");

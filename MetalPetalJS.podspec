@@ -35,9 +35,7 @@ TODO: Add long description of the pod here.
 
   s.source_files = 'MetalPetalJS/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'MetalPetalJS' => ['MetalPetalJS/Assets/*.png']
-  # }
+  s.resources = 'MetalPetalJS/Assets/*.{png,js}'
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
