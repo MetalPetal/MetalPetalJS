@@ -9,6 +9,7 @@
 #import "MTIImageJSSupport.h"
 #import "MTIFilterJSSupport.h"
 #import "MTIVectorJSSupport.h"
+#import "MTISIMDTypeKVCSupport.h"
 
 @interface MTIJSUtilities: NSObject <MTIJSUtilities>
 
@@ -39,6 +40,7 @@
                          @"operatingSystemVersion": NSProcessInfo.processInfo.operatingSystemVersionString
                          } forKeyedSubscript:@"MTIJSEnvironment"];
     
+    MTISIMDTypeExportToJSContext(context);
     [MTIJSUtilities mti_exportToJSContext:context];
     [MTIFilterJSSupport exportToContext:context];
     [MTIImage mti_exportToJSContext:context];
