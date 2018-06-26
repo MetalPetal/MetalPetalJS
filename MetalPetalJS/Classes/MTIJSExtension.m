@@ -113,6 +113,7 @@ static JSCGCFunctionPtr JSCGCFunction;
         void *frameworkHandler = dlopen(bundle.executablePath.UTF8String, RTLD_NOW);
         NSString *name = [@[@"JS",@"Synchronous",@"GarbageCollect",@"ForDebugging"] componentsJoinedByString:@""];
         JSCGCFunction = dlsym(frameworkHandler , name.UTF8String);
+        NSAssert(JSCGCFunction, @"");
     });
     JSCGCFunction(self.JSGlobalContextRef);
 }
