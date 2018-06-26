@@ -41,6 +41,8 @@
         NSLog(@"%@", self.jsContext.exception);
     }
     
+    [self.jsContext mti_garbageCollect];
+    
     self.imageView.image = image;
 }
 

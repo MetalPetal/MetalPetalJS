@@ -97,3 +97,24 @@
 }
 
 @end
+
+#import <dlfcn.h>
+
+@implementation JSContext (MTIJSExtension)
+
+typedef void(*JSCGCFunctionPtr)(JSContextRef);
+
+static JSCGCFunctionPtr JSCGCFunction;
+
+- (void)mti_garbageCollect {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSBundle *bundle = [NSBundle bundleForClass:JSContext.class];
+        void *frameworkHandler = dlopen(bundle.executablePath.UTF8String, RTLD_NOW);
+        NSString *name = [@[@"JS",@"Synchronous",@"GarbageCollect",@"ForDebugging"] componentsJoinedByString:@""];
+        JSCGCFunction = dlsym(frameworkHandler , name.UTF8String);
+    });
+    JSCGCFunction(self.JSGlobalContextRef);
+}
+
+@end

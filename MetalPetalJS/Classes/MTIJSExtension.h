@@ -42,4 +42,10 @@ JSExportAs(joinPath,
 
 @end
 
+@interface JSContext (MTIJSExtension)
+
+- (void)mti_garbageCollect;
+
+@end
+
 NS_ASSUME_NONNULL_END
