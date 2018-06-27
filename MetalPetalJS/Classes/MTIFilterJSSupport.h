@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable instancetype)filterWithName:(NSString *)name;
 
-- (nullable id)valueForKey:(NSString *)key;
+- (nullable id)valueForPropertyKey:(NSString *)key;
 
-- (void)setValue:(nullable id)value forKey:(NSString *)key;
+- (BOOL)setValue:(nullable id)value forPropertyKey:(NSString *)key;
 
 @end
 

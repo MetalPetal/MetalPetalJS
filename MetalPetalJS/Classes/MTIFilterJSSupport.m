@@ -25,12 +25,33 @@
     return self;
 }
 
-- (void)setValue:(id)value forKey:(NSString *)key {
-    [_filter setValue:value forKey:key];
+- (BOOL)setValue:(id)value forPropertyKey:(NSString *)key {
+    if ([key isEqualToString:@"__proto__"]) {
+        return NO;
+    }
+    
+    BOOL result = NO;
+    @try {
+        [_filter setValue:value forKey:key];
+        result = YES;
+    } @catch (NSException *ex) {
+        NSLog(@"*** Caught exception setting key \"%@\" : %@", key, ex);
+    }
+    return result;
 }
 
-- (id)valueForKey:(NSString *)key {
-    return [_filter valueForKey:key];
+- (id)valueForPropertyKey:(NSString *)key {
+    if ([key isEqualToString:@"__proto__"]) {
+        return nil;
+    }
+    
+    id result = nil;
+    @try {
+        result = [_filter valueForKey:key];
+    } @catch (NSException *ex) {
+        NSLog(@"*** Caught exception getting key \"%@\" : %@", key, ex);
+    }
+    return result;
 }
 
 + (nullable instancetype)filterWithName:(nonnull NSString *)name {
@@ -39,11 +60,10 @@
 
 @end
 
-
 @implementation MTIFilterJSSupport
 
 + (void)exportToContext:(JSContext *)context {
-    [context setObject:MTIJSNativeFilter.class forKeyedSubscript:@"MTINativeFilter"];
+    [context setObject:MTIJSNativeFilter.class forKeyedSubscript:NSStringFromClass(MTIJSNativeFilter.class)];
 }
 
 @end
