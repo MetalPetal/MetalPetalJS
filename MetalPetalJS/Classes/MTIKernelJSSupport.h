@@ -17,7 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MTIRenderPipelineKernel (JSSupport) <MTIKernelJSSupport>
+@protocol MTIRenderPipelineKernelJSSupport <JSExport>
+
+@property (nonatomic, class, strong, readonly) MTIRenderPipelineKernel *passthroughRenderPipelineKernel;
+
+@end
+
+@interface MTIRenderPipelineKernel (JSSupport) <MTIRenderPipelineKernelJSSupport, MTIKernelJSSupport>
 
 /*
  {
@@ -28,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@protocol MTIComputePipelineKernelJSSupport <MTIKernelJSSupport>
+@protocol MTIComputePipelineKernelJSSupport <JSExport>
 
 - (MTIImage *)applyToInputImages:(NSArray<MTIImage *> *)images
                       parameters:(NSDictionary<NSString *,id> *)parameters
@@ -37,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface MTIComputePipelineKernel (JSSupport) <MTIComputePipelineKernelJSSupport>
+@interface MTIComputePipelineKernel (JSSupport) <MTIComputePipelineKernelJSSupport, MTIKernelJSSupport>
 
 /*
  {
