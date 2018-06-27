@@ -34,7 +34,8 @@
     self.jsContext = [[JSContext alloc] initWithVirtualMachine:self.jsVirtualMachine];
     [MTIJSExtension exportToJSContext:self.jsContext];
     
-    JSValue *jsImage = [self.jsContext evaluateScript:[NSString stringWithContentsOfURL:[NSBundle.mainBundle URLForResource:@"script" withExtension:@"js"] encoding:NSUTF8StringEncoding error:nil]];
+    NSURL *scriptURL = [NSBundle.mainBundle URLForResource:@"script" withExtension:@"js"];
+    JSValue *jsImage = [self.jsContext evaluateScript:[NSString stringWithContentsOfURL:scriptURL encoding:NSUTF8StringEncoding error:nil] withSourceURL:scriptURL];
     MTIImage *image = [jsImage toObjectOfClass:[MTIImage class]];
     
     if(self.jsContext.exception) {

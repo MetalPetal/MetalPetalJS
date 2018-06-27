@@ -52,7 +52,8 @@
     [MTIVector mti_exportToJSContext:context];
     [MTIRenderPassOutputDescriptor mti_exportToJSContext:context];
     
-    [context evaluateScript:[NSString stringWithContentsOfURL:[[NSBundle bundleForClass:self] URLForResource:@"MetalPetal" withExtension:@"js"] encoding:NSUTF8StringEncoding error:nil]];
+    NSURL *sourceURL = [[NSBundle bundleForClass:self] URLForResource:@"MetalPetal" withExtension:@"js"];
+    [context evaluateScript:[NSString stringWithContentsOfURL:sourceURL encoding:NSUTF8StringEncoding error:nil] withSourceURL:sourceURL];
 }
     
 @end
