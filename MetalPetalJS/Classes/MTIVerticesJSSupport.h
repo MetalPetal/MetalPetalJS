@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)squareVerticesForRect:(CGRect)rect;
 
++ (instancetype)fullViewportSquareVertices;
+
 @end
 
 @interface MTIVertices (JSSupport) <MTIVerticesJSSupport>

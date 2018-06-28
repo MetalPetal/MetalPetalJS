@@ -28,7 +28,7 @@
     
     var blurredImage = filter.outputImage;
 
-    var geometry = MTIVertices.squareVerticesForRect({ x: -1, y: -1, width: 2, height: 2 });
+    var geometry = MTIVertices.fullViewportSquareVertices();
 
     var command = MTIRenderCommand.build({
         kernel,
