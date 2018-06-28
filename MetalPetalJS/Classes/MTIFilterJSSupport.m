@@ -7,6 +7,16 @@
 
 #import "MTIFilterJSSupport.h"
 
+@implementation MTIBlendFilter (MTIFilterCreationOptions)
+
+- (instancetype)initWithOptions:(NSDictionary *)options {
+    MTIBlendMode blendMode = options[@"blendMode"];
+    NSParameterAssert(blendMode.length > 0);
+    return [self initWithBlendMode:blendMode];
+}
+
+@end
+
 @interface MTIJSNativeFilter: NSObject <MTIFilterJSSupport>
 
 @property (nonatomic, strong) id filter;
@@ -15,9 +25,14 @@
 
 @implementation MTIJSNativeFilter
 
-- (instancetype)initWithName:(NSString *)name {
+- (instancetype)initWithName:(NSString *)name options:(NSDictionary *)options {
     if (self = [super init]) {
-        _filter = [[NSClassFromString(name) alloc] init];
+        Class FilterClass = NSClassFromString(name);
+        if ([FilterClass conformsToProtocol:@protocol(MTIFilterJSInitializing)]) {
+            _filter = [(id<MTIFilterJSInitializing>)[FilterClass alloc] initWithOptions:options];
+        } else {
+            _filter = [[FilterClass alloc] init];
+        }
         if (!_filter) {
             return nil;
         }
@@ -54,8 +69,8 @@
     return result;
 }
 
-+ (nullable instancetype)filterWithName:(nonnull NSString *)name {
-    return [[self alloc] initWithName:name];
++ (nullable instancetype)filterWithName:(nonnull NSString *)name options:(nullable NSDictionary *)options {
+    return [[self alloc] initWithName:name options:options];
 }
 
 @end

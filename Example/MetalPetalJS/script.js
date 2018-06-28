@@ -1,22 +1,28 @@
 (function () {
     console.log(MTIImage);
 
-    var kernel = MTIRenderPipelineKernel.kernelWithJSONDescriptor({
+    var kernel = MTIRenderPipelineKernel.build({
         fragmentFunction: { 
             name: "shader", 
             library: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "default.metallib") 
         },
         vertexFunction: {
-             name: "passthroughVertex" 
+            name: "passthroughVertex" 
         }
     });
 
-    var image = MTIImage.imageWithContentsOfFileOptionsAlphaType(
-        MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "test.jpg"),
-        { MTKTextureLoaderOptionSRGB: false },
-        MTIAlphaType.alphaIsOne);
+    var image = MTIImage.build({
+        filePath: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "test.jpg"),
+        options: { MTKTextureLoaderOptionSRGB: false },
+        alphaType: MTIAlphaType.alphaIsOne
+    });
  
-    var filter = new MTINativeFilter("MTIMPSGaussianBlurFilter");
+    var blendFilter = MTINativeFilter.build({
+        name: "MTIBlendFilter",
+        options: {"blendMode": "Multiply"}
+    });
+ 
+    var filter = MTINativeFilter("MTIMPSGaussianBlurFilter");
     filter.radius = 20.0;
     filter.inputImage = image;
     
@@ -24,11 +30,22 @@
 
     var geometry = MTIVertices.squareVerticesForRect({ x: -1, y: -1, width: 2, height: 2 });
 
-    var command = MTIRenderCommand.renderCommandWithKernelGeometryImagesParameters(kernel, geometry, [blurredImage], {});
+    var command = MTIRenderCommand.build({
+        kernel,
+        geometry,
+        images: [blurredImage],
+        parameters: {}
+    });
 
-    var descriptor = MTIRenderPassOutputDescriptor.renderPassOutputDescriptorWithSizePixelFormat(blurredImage.size, 0);
+    var descriptor = MTIRenderPassOutputDescriptor.build({
+        size: blurredImage.size,
+        pixelFormat: 0
+    });
 
-    var outputImage = MTIRenderCommand.imagesByPerformingRenderCommandsOutputDescriptors([command], [descriptor])[0];
+    var outputImage = MTIRenderCommand.perform({
+        commands: [command], 
+        outputDescriptors: [descriptor]
+    })[0];
 
     return outputImage;
 })();

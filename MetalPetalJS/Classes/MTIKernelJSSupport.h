@@ -13,7 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MTIKernelJSSupport <JSExport>
 
-+ (nullable instancetype)kernelWithJSONDescriptor:(NSDictionary *)JSONDescriptor;
+JSExportAs(fromJSONDescriptor,
++ (nullable instancetype)kernelWithJSONDescriptor:(NSDictionary *)JSONDescriptor);
 
 @end
 

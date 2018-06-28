@@ -7,12 +7,24 @@
 
 #import <Foundation/Foundation.h>
 #import <JavascriptCore/JavascriptCore.h>
+#import <MetalPetal/MetalPetal.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol MTIFilterJSInitializing <NSObject>
+
+- (nullable instancetype)initWithOptions:(NSDictionary *)options;
+
+@end
+
+@interface MTIBlendFilter (MTIFilterCreationOptions) <MTIFilterJSInitializing>
+
+@end
+
 @protocol MTIFilterJSSupport <JSExport>
 
-+ (nullable instancetype)filterWithName:(NSString *)name;
+JSExportAs(filterWithName,
++ (nullable instancetype)filterWithName:(NSString *)name options:(nullable NSDictionary *)options);
 
 - (nullable id)valueForPropertyKey:(NSString *)key;
 
