@@ -51,8 +51,12 @@
      forKeyedSubscript:@"MTIMaskMode"];
     
     [context setObject:@{@"mainBundlePath": [NSBundle mainBundle].bundlePath,
-                         @"operatingSystemVersion": NSProcessInfo.processInfo.operatingSystemVersionString
-                         } forKeyedSubscript:@"MTIJSEnvironment"];
+                         @"operatingSystemVersionString": NSProcessInfo.processInfo.operatingSystemVersionString,
+                         @"operatingSystemVersion": @{@"major": @(NSProcessInfo.processInfo.operatingSystemVersion.majorVersion),
+                                                      @"minor": @(NSProcessInfo.processInfo.operatingSystemVersion.minorVersion),
+                                                      @"patch": @(NSProcessInfo.processInfo.operatingSystemVersion.patchVersion)},
+                         @"mainBundleInfoDictionary": [NSBundle mainBundle].infoDictionary}
+     forKeyedSubscript:@"MTIJSEnvironment"];
     
     MTISIMDTypeExportToJSContext(context);
     [MTIJSUtilities mti_exportToJSContext:context];
