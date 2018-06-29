@@ -14,6 +14,8 @@
 #import "MTIImageJSSupport.h"
 #import "MTIJSExtension.h"
 #import "MTIKernelJSSupport.h"
+#import "MTILayerJSSupport.h"
+#import "MTIMaskJSSupport.h"
 #import "MTIRenderCommandJSSupport.h"
 #import "MTISIMDTypeKVCSupport.h"
 #import "MTIVectorJSSupport.h"

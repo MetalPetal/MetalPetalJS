@@ -36,6 +36,20 @@
                          @"persistent": @(MTIImageCachePolicyPersistent)}
      forKeyedSubscript:@"MTIImageCachePolicy"];
     
+    [context setObject:@{@"pixel": @(MTILayerLayoutUnitPixel),
+                         @"fractionOfBackgroundSize": @(MTILayerLayoutUnitFractionOfBackgroundSize)}
+     forKeyedSubscript:@"MTILayerLayoutUnit"];
+    
+    [context setObject:@{@"red": @(MTIColorComponentRed),
+                         @"green": @(MTIColorComponentGreen),
+                         @"blue": @(MTIColorComponentBlue),
+                         @"alpha": @(MTIColorComponentAlpha)}
+     forKeyedSubscript:@"MTIColorComponent"];
+    
+    [context setObject:@{@"normal": @(MTIMaskModeNormal),
+                         @"oneMinusMaskValue": @(MTIMaskModeOneMinusMaskValue)}
+     forKeyedSubscript:@"MTIMaskMode"];
+    
     [context setObject:@{@"mainBundlePath": [NSBundle mainBundle].bundlePath,
                          @"operatingSystemVersion": NSProcessInfo.processInfo.operatingSystemVersionString
                          } forKeyedSubscript:@"MTIJSEnvironment"];
@@ -51,6 +65,8 @@
     [MTIVertices mti_exportToJSContext:context];
     [MTIVector mti_exportToJSContext:context];
     [MTIRenderPassOutputDescriptor mti_exportToJSContext:context];
+    [MTIMask mti_exportToJSContext:context];
+    [MTILayer mti_exportToJSContext:context];
     
     NSURL *sourceURL = [[NSBundle bundleForClass:self] URLForResource:@"MetalPetal" withExtension:@"js"];
     [context evaluateScript:[NSString stringWithContentsOfURL:sourceURL encoding:NSUTF8StringEncoding error:nil] withSourceURL:sourceURL];

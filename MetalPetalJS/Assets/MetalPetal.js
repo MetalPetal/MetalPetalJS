@@ -87,4 +87,26 @@ MTIVector.fromValues = function(values) {
     return MTIVector.vectorWithValues(values);
 }
 
+/* -- MTIMask -- */
+
+MTIMask.build = function(desc) {
+    return MTIMask.maskWithContentComponentMode(desc.content, desc.component, desc.mode);
+}
+
+/* -- MTILayer -- */
+
+MTILayer.build = function(desc) {
+    return MTILayer.layerWithContentContentIsFlippedContentRegionCompositingMaskLayoutUnitPositionSizeRotationOpacityBlendMode(
+        desc.content,
+        desc.contentIsFlipped,
+        (desc.contentRegion || {origin: {x: 0, y: 0}, size: {width: 1, height: 1}}),
+        desc.compositingMask,
+        desc.layoutUnit,
+        desc.position,
+        desc.size,
+        desc.rotation,
+        desc.opacity,
+        desc.blendMode
+    );
+}
 
