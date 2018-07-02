@@ -15,7 +15,6 @@
 #import "MTITextureDescriptor.h"
 #import "MTIImageRenderingContext.h"
 #import "MTIComputePipeline.h"
-#import "MTIVector.h"
 #import "MTIDefer.h"
 #import "MTIImagePromiseDebug.h"
 #import "MTIContext+Internal.h"
@@ -73,7 +72,17 @@
     
     MTLPixelFormat pixelFormat = (self.outputPixelFormat == MTIPixelFormatUnspecified) ? renderingContext.context.workingPixelFormat : self.outputPixelFormat;
     
-    MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:_dimensions.width height:_dimensions.height mipmapped:NO];
+    MTLTextureDescriptor *textureDescriptor;
+    if (_dimensions.depth > 1) {
+        textureDescriptor = [[MTLTextureDescriptor alloc] init];
+        textureDescriptor.textureType = MTLTextureType3D;
+        textureDescriptor.width = _dimensions.width;
+        textureDescriptor.height = _dimensions.height;
+        textureDescriptor.depth = _dimensions.depth;
+        textureDescriptor.pixelFormat = pixelFormat;
+    } else {
+        textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:_dimensions.width height:_dimensions.height mipmapped:NO];
+    }
     textureDescriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
 
     MTIImagePromiseRenderTarget *renderTarget = [renderingContext.context newRenderTargetWithResuableTextureDescriptor:[textureDescriptor newMTITextureDescriptor] error:&error];
@@ -104,9 +113,9 @@
 
     NSUInteger w = computePipeline.state.threadExecutionWidth;
     NSUInteger h = computePipeline.state.maxTotalThreadsPerThreadgroup / w;
-    MTLSize threadsPerGrid = MTLSizeMake(_dimensions.width,_dimensions.height,1);
+    MTLSize threadsPerGrid = MTLSizeMake(_dimensions.width,_dimensions.height,_dimensions.depth);
     MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
-    MTLSize threadgroupsPerGrid = MTLSizeMake((_dimensions.width + w - 1) / w, (_dimensions.height + h - 1) / h, 1);
+    MTLSize threadgroupsPerGrid = MTLSizeMake((_dimensions.width + w - 1) / w, (_dimensions.height + h - 1) / h, _dimensions.depth);
     
     if (@available(iOS 11.0, *)) {
         if ([renderingContext.context.device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily4_v1]) {

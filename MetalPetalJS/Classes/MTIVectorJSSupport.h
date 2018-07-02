@@ -13,15 +13,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MTIVectorJSSupport <JSExport>
 
-+ (instancetype)vectorWithValues:(NSArray<NSNumber *> *)values;
++ (instancetype)vectorWithFloatValues:(NSArray<NSNumber *> *)values;
++ (instancetype)vectorWithIntValues:(NSArray<NSNumber *> *)values;
++ (instancetype)vectorWithUIntValues:(NSArray<NSNumber *> *)values;
 
 @property (readonly) CGPoint CGPointValue;
 @property (readonly) CGSize CGSizeValue;
 @property (readonly) CGRect CGRectValue;
 
 @property (readonly) NSUInteger count;
-
-@property (nonatomic,copy,readonly) NSData *data;
 
 @end
 

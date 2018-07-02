@@ -83,8 +83,16 @@ MTIRenderCommand.perform = function(parameters) {
 
 /* -- MTIVector -- */
 
-MTIVector.fromValues = function(values) {
-    return MTIVector.vectorWithValues(values);
+MTIVector.fromFloatValues = function(values) {
+    return MTIVector.vectorWithFloatValues(values);
+}
+
+MTIVector.fromIntValues = function(values) {
+    return MTIVector.vectorWithIntValues(values);
+}
+
+MTIVector.fromUIntValues = function(values) {
+    return MTIVector.vectorWithUIntValues(values);
 }
 
 /* -- MTIMask -- */
