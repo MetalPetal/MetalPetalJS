@@ -34,8 +34,8 @@ MTIComputePipelineKernel.build = function(desc) {
     return MTIComputePipelineKernel.fromJSONDescriptor(desc);
 };
 
-MTIComputePipelineKernel.apply = function(desc) {
-    return MTIComputePipelineKernel.applyToInputImagesParametersOutputTextureDimensionsOutputPixelFormat(desc.images, desc.parameters, desc.outputTextureDimensions, desc.outputPixelFormat);
+MTIComputePipelineKernel.prototype.apply = function(desc) {
+    return this.applyToInputImagesParametersOutputTextureDimensionsOutputPixelFormat(desc.images, desc.parameters, desc.outputTextureDimensions, desc.outputPixelFormat);
 }
 
 /* -- MTIImage -- */
@@ -47,7 +47,7 @@ MTIImage.build = function(parameters) {
         } else {
             return MTIImage.imageWithContentsOfFileOptions(parameters.filePath, parameters.options);
         }
-    } else if (options.color) {
+    } else if (parameters.color) {
         return MTIImage.imageWithColorSRGBSize(parameters.color, parameters.sRGB, parameters.size);
     }
     return undefined;
