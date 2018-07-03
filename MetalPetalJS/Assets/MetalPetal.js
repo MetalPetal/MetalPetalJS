@@ -31,7 +31,7 @@ MTIRenderPipelineKernel.build = function(desc) {
 MTIRenderPipelineKernel.passthroughKernel = MTIRenderPipelineKernel.passthroughRenderPipelineKernel();
 
 MTIComputePipelineKernel.build = function(desc) {
-    return MTIRenderPipelineKernel.fromJSONDescriptor(desc);
+    return MTIComputePipelineKernel.fromJSONDescriptor(desc);
 };
 
 MTIComputePipelineKernel.apply = function(desc) {
