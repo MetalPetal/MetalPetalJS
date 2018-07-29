@@ -25,7 +25,6 @@
 		0BD24DF36D7927CDE3EEB241BB197EF4 /* MTIVertex.m in Sources */ = {isa = PBXBuildFile; fileRef = AB42D0CEA36BA1232BAFAA931DAFE0B6 /* MTIVertex.m */; };
 		0D9DF64757E5BA88B04D7CC9A324DBD1 /* MTIBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 77D695224B06F0371751E803DD5C467C /* MTIBlendFilter.m */; };
 		0E448FD0935C79A0467A2DBDB2745F5B /* MTIShaderLib.h in Headers */ = {isa = PBXBuildFile; fileRef = A814A6584AE52362EFBB629BCEEEBFEC /* MTIShaderLib.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		1094C1CCA7059D741B3ABFB6E7CA2AC5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */; };
 		10DE30E1E7504AC545AB4ACB61F089C8 /* MTICropFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B449280C3BE68ED56C6C32E0A2572B9 /* MTICropFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		112346F928F7C51561257A93FDD8C5EB /* MTIVector.m in Sources */ = {isa = PBXBuildFile; fileRef = 1EB66C65577C08223982D3EFCFE18591 /* MTIVector.m */; };
 		124CB2EE4ADFCB60CD172823B114CD30 /* MTICVMetalTextureCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C19B4A5EE437563B2C1382E393EF222 /* MTICVMetalTextureCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -74,11 +73,11 @@
 		475C9BF986A4A2151FA82B6543C0E221 /* MetalPetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 99EE04254918D7E138AF554885DDBCE1 /* MetalPetal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		47A91FD23F1B231720D7FC792A3B1B08 /* MTIBlendFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2399771A43E7FD5B9A5158DDF640E958 /* MTIBlendFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		488BBF7C1A06A145A82AB9CA2368AD8F /* MTIRenderPassOutputDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = C16890EECA760F3D1A93631C61218910 /* MTIRenderPassOutputDescriptor.m */; };
-		48AE07CB3CF3DE96DCEDB8B806787AB2 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */; };
 		49B625AF22706FCE8D89F258859885C4 /* MTIMPSHistogramFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = E54555CC8237F7D4961BBFA21544E36D /* MTIMPSHistogramFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4BC9B424725EAAFD39DD5B7DC4E2EA52 /* MTILensBlurFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C4C15B8066A1AFA0A58290F9CFD0CFE /* MTILensBlurFilter.m */; };
 		4CC27F003BF759CEEE9AC6DA6ACB03B5 /* MTITextureDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 1288599DBC4265FF30029538FF59CC0E /* MTITextureDescriptor.m */; };
 		4CEF04256D4C974A82901446A0C5F023 /* MTIMPSBoxBlurFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 29125AC9E43E91F6B13E141053A2E54C /* MTIMPSBoxBlurFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E5C89F2CB11AC70077092FE3F971B81 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */; };
 		4F7D4E914AC46F2E534B5D340D9C1D55 /* MTIMPSSobelFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 696FEA913FA5515675DCBCE735B52AC0 /* MTIMPSSobelFilter.m */; };
 		5064210D562C6788CF803FBE65C689EB /* MTIVertex.h in Headers */ = {isa = PBXBuildFile; fileRef = C99B5C0E1E2DA0FECCA8C49C0F7791B6 /* MTIVertex.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		50D26149FF02FA7EB69CE803A3E24082 /* MTIDrawableRendering.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E6B9D179C627343A97FADFE4CCD60DD /* MTIDrawableRendering.m */; };
@@ -88,6 +87,7 @@
 		5617D5634B3CD186474FE43DBF616BC0 /* MTIPrint.m in Sources */ = {isa = PBXBuildFile; fileRef = 2208220378A408D941FDC6B374501F5E /* MTIPrint.m */; };
 		57C2837EB5FA421AE38C82787893101B /* MTIImage+Promise.h in Headers */ = {isa = PBXBuildFile; fileRef = 94469398845F7AFAB40C7CA2439490B9 /* MTIImage+Promise.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5868DA56955AB776D5BC80554946C812 /* MTIRenderPipeline.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F599547DD1354E89C66B6C0055802A9 /* MTIRenderPipeline.m */; };
+		597D9E065EE7794B7CC96C84C1BAC1C6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */; };
 		5AFB9EC3E6A7CC91FB8DD3E5653A9DF2 /* MTIColorMatrixFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 23813FC9DC170A8544B068CA064100F5 /* MTIColorMatrixFilter.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5D0515699481C187C3191703DF15B2F3 /* MTIChromaKeyBlendFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBFBC49C27044BDCD5C76757AED6EC /* MTIChromaKeyBlendFilter.m */; };
 		624C5FE92C870FD79D9C267BD9DD0D3D /* MTKTextureLoaderExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = 6963E2D0DEB6DB2FB3E55864577938F4 /* MTKTextureLoaderExtensions.m */; };
@@ -128,8 +128,10 @@
 		9363A8D290A9C3874CC62896CFFC88F4 /* MTIPixelFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = A9E1057BCF102B9F7D61372CDE134C04 /* MTIPixelFormat.m */; };
 		95828EB4B1ED721AA39502CF8005762C /* MTISamplerDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = DB8D355E3F9E44B937D7D835DC4677F3 /* MTISamplerDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9A3ACFDA6F78AD6E92585AC5B2A285CF /* MTIPrint.h in Headers */ = {isa = PBXBuildFile; fileRef = 99F2AC27866B591B53A05E0142F786B4 /* MTIPrint.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9A935A32225E376AA4C66F2D7D632E4E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */; };
 		9AEB133BC6EA161D5E91A93CAB097B9B /* MTIVectorJSSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = D8AFAAB13867F65BD29BF7B7635FC614 /* MTIVectorJSSupport.m */; };
 		9EC7761B22962A70AADBBB1F1C06B546 /* MTICoreImageRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = AC669A1562AA7CC8CFB0371A5F1E0BA6 /* MTICoreImageRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A20AF32B1C77A8FB9730AE150DBEF231 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */; };
 		A57B5AD4E7E377A83313765C28D98F9F /* MTIImage.m in Sources */ = {isa = PBXBuildFile; fileRef = BA49B943F65BE351E7C2398FBCD0D189 /* MTIImage.m */; };
 		A6097157649BCAB28C806FEA87FDA876 /* MetalPetalJS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F7DEA285A55CB283229537863006DB0A /* MetalPetalJS-dummy.m */; };
 		A67EFDE9DB4D9165CD841DB68BF458B8 /* MTIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 1022DE490EA3046A23CB03A7D062AF20 /* MTIImageProperties.m */; };
@@ -159,13 +161,11 @@
 		CCDA9DB95D3FB013BDF268FE6BBD4C1F /* MTIVector+SIMD.m in Sources */ = {isa = PBXBuildFile; fileRef = CB339AD43BF48C334CD00F457ED97FD5 /* MTIVector+SIMD.m */; };
 		CDDB7E29EC0F14CC3E91843C600BFFB9 /* MTICVPixelBufferRendering.h in Headers */ = {isa = PBXBuildFile; fileRef = 1079DAC999D35893156246FC9D365A87 /* MTICVPixelBufferRendering.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDE80583B4E7A29552C7940D37D3D514 /* MTITexturePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 8093A478F7DA192EF5DD63577CBB34A6 /* MTITexturePool.m */; };
-		CF44F87EE7E559528326F1C5E0079286 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */; };
 		CFA9C53935F32DD4291EE87F0083D8BF /* MTIFilterJSSupport.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B38E17A00675DCECE6F264B2ACE556A /* MTIFilterJSSupport.m */; };
 		D03B1810F23B9BDCFF9BDAFDD81A3A94 /* MTIRenderPipeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E39D97551B80EAE1CF2848D41B838D4 /* MTIRenderPipeline.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0B66178E97C5E2316D779DF8EBCAFA0 /* HighPassSkinSmoothing.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2457E2B6D3F4BF9F16924DC82520F7C8 /* HighPassSkinSmoothing.metal */; };
 		D258873C7AC0DB41B280D73C94EE0738 /* Pods-MetalPetalJS_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D6C4FB4B4C44E954917618465DB3456 /* Pods-MetalPetalJS_Example-dummy.m */; };
 		D342B9B27A5B245E970A992059EEF68B /* MTIColorMatrix.m in Sources */ = {isa = PBXBuildFile; fileRef = F0C4415AF498F64EF779173D7CAB5F6B /* MTIColorMatrix.m */; };
-		D4190A9EF8B144FF065501A02A4C28ED /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */; };
 		D4E9FA76AB0E4C29B704458C0992F85A /* MTIError.h in Headers */ = {isa = PBXBuildFile; fileRef = 03221F7794E852F07A6CD8D2FAC4E68E /* MTIError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D516C126105DC3C4F7D3AF3D82489F18 /* MTIWeakToStrongObjectsMapTable.m in Sources */ = {isa = PBXBuildFile; fileRef = C3E39EA0A1413597A61082960ED89A4E /* MTIWeakToStrongObjectsMapTable.m */; };
 		D63E35313F71A8A0F2950C2C11F16BB4 /* MTIKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = 49B9F4CB9FF43FDD755205B7919A271D /* MTIKernel.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -306,7 +306,6 @@
 		5AB7E98E655581086B356BD606798814 /* MTILock.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTILock.h; path = Frameworks/MetalPetal/MTILock.h; sourceTree = "<group>"; };
 		5BE158789C5C919CB83F2A65813E4EC5 /* MTIMaskJSSupport.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTIMaskJSSupport.h; path = MetalPetalJS/Classes/MTIMaskJSSupport.h; sourceTree = "<group>"; };
 		5F4B379D5030346726FB01555D8319C0 /* MTIVector+SIMD.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "MTIVector+SIMD.h"; path = "Frameworks/MetalPetal/MTIVector+SIMD.h"; sourceTree = "<group>"; };
-		60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		674014DDD8C04B6DF857C73D84AD6DFB /* MTITextureDimensions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MTITextureDimensions.m; path = Frameworks/MetalPetal/MTITextureDimensions.m; sourceTree = "<group>"; };
 		675A8899B820651008619E5975EAC314 /* MTIImage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTIImage.h; path = Frameworks/MetalPetal/MTIImage.h; sourceTree = "<group>"; };
 		67EC3EF35E2F1BD6DB46CC46964E6712 /* MTIFilterJSSupport.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTIFilterJSSupport.h; path = MetalPetalJS/Classes/MTIFilterJSSupport.h; sourceTree = "<group>"; };
@@ -428,6 +427,7 @@
 		E4DFCFF0BD783F090140D6F805411CE7 /* MTICropFilter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MTICropFilter.m; path = Frameworks/MetalPetal/Filters/MTICropFilter.m; sourceTree = "<group>"; };
 		E54555CC8237F7D4961BBFA21544E36D /* MTIMPSHistogramFilter.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTIMPSHistogramFilter.h; path = Frameworks/MetalPetal/Filters/MTIMPSHistogramFilter.h; sourceTree = "<group>"; };
 		E582A1257649BE2E6EA156319AA284F3 /* Pods-MetalPetalJS_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MetalPetalJS_Example.release.xcconfig"; sourceTree = "<group>"; };
+		E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		E7E17983C8935CFE3B8A7CDA98F9B0D7 /* MTITransformFilter.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = MTITransformFilter.m; path = Frameworks/MetalPetal/Filters/MTITransformFilter.m; sourceTree = "<group>"; };
 		E7FF0067624BF4E69DEF4FA13D95D0C4 /* Pods-MetalPetalJS_Example-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MetalPetalJS_Example-resources.sh"; sourceTree = "<group>"; };
 		E84610832674C927450141BB108D2397 /* MTIComputePipeline.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = MTIComputePipeline.h; path = Frameworks/MetalPetal/MTIComputePipeline.h; sourceTree = "<group>"; };
@@ -459,7 +459,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				48AE07CB3CF3DE96DCEDB8B806787AB2 /* Foundation.framework in Frameworks */,
+				A20AF32B1C77A8FB9730AE150DBEF231 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -467,7 +467,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1094C1CCA7059D741B3ABFB6E7CA2AC5 /* Foundation.framework in Frameworks */,
+				597D9E065EE7794B7CC96C84C1BAC1C6 /* Foundation.framework in Frameworks */,
 				270E65C7617C40D37226A7550A64BFBC /* MetalPetal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,7 +476,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D4190A9EF8B144FF065501A02A4C28ED /* Foundation.framework in Frameworks */,
+				9A935A32225E376AA4C66F2D7D632E4E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -484,21 +484,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF44F87EE7E559528326F1C5E0079286 /* Foundation.framework in Frameworks */,
+				4E5C89F2CB11AC70077092FE3F971B81 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1352F58BA0B944B67A0855F4D0E2D5F0 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				60DD2F76D9A26C485A768ED1F61846CD /* Foundation.framework */,
-			);
-			name = iOS;
-			sourceTree = "<group>";
-		};
 		2E14E2E87A8DB54F1BA4927881E5FFB0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -776,9 +768,17 @@
 			isa = PBXGroup;
 			children = (
 				2E2B22B3412FDBE944CFEDF0A2E2D9B6 /* MetalPetal.framework */,
-				1352F58BA0B944B67A0855F4D0E2D5F0 /* iOS */,
+				A9D65A82D1F0ED55DF0A5F10D36591C4 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A9D65A82D1F0ED55DF0A5F10D36591C4 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				E698EFBB939330F1AC2EE4B497CF99AF /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		DA214A9A8720EA67B1B54DBB31A8167A /* MetalPetal */ = {
@@ -1394,36 +1394,6 @@
 			};
 			name = Debug;
 		};
-		7FD80F566E659AF9C86C97199BA4D8F2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BE254D177A7DE7F73F933572E2D1675 /* MetalPetal.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/MetalPetal/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				MODULEMAP_FILE = "Target Support Files/MetalPetal/MetalPetal.modulemap";
-				PRODUCT_MODULE_NAME = MetalPetal;
-				PRODUCT_NAME = MetalPetal;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Release;
-		};
 		B4753FFCC43B5E0181E198456E60A847 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DF27C6910E4940FBCDE7497E72D0A9CC /* Pods-MetalPetalJS_Example.debug.xcconfig */;
@@ -1487,7 +1457,7 @@
 			};
 			name = Release;
 		};
-		DBC5862760DFD8AE21BF0D8B4B5A5B32 /* Debug */ = {
+		D12FA02E2FA21A2EDB6C90795A03BB66 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1BE254D177A7DE7F73F933572E2D1675 /* MetalPetal.xcconfig */;
 			buildSettings = {
@@ -1510,6 +1480,38 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.1;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		D86E8804CCE2DC361DE302EA06463F13 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BE254D177A7DE7F73F933572E2D1675 /* MetalPetal.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/MetalPetal/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/MetalPetal/MetalPetal.modulemap";
+				PRODUCT_MODULE_NAME = MetalPetal;
+				PRODUCT_NAME = MetalPetal;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.1;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1613,8 +1615,8 @@
 		13B2B99835BEC3984BEC44E2804E4531 /* Build configuration list for PBXNativeTarget "MetalPetal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DBC5862760DFD8AE21BF0D8B4B5A5B32 /* Debug */,
-				7FD80F566E659AF9C86C97199BA4D8F2 /* Release */,
+				D86E8804CCE2DC361DE302EA06463F13 /* Debug */,
+				D12FA02E2FA21A2EDB6C90795A03BB66 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
