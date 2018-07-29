@@ -58,7 +58,8 @@
                          @"mainBundleInfoDictionary": [NSBundle mainBundle].infoDictionary}
      forKeyedSubscript:@"MTIJSEnvironment"];
     
-    MTISIMDTypeExportToJSContext(context);
+    MTISIMDTypeKVCSupportExportToJSContext(context);
+    
     [MTIJSUtilities mti_exportToJSContext:context];
     [MTIFilterJSSupport exportToContext:context];
     [MTIImage mti_exportToJSContext:context];

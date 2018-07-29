@@ -9,8 +9,11 @@
 #import "MTISIMDTypeKVCSupport.h"
 @import ObjectiveC;
 
-FOUNDATION_EXPORT void MTISIMDTypeExportToJSContext(JSContext *context) {
-    [context setObject:@{
+static NSDictionary * MTISIMDTypeNameValueMap(void) {
+    static NSDictionary *map;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        map = @{
                         @"float2": @(MTISIMDTypeFloat2),
                         @"float3": @(MTISIMDTypeFloat3),
                         @"float4": @(MTISIMDTypeFloat4),
@@ -36,8 +39,17 @@ FOUNDATION_EXPORT void MTISIMDTypeExportToJSContext(JSContext *context) {
                         @"uint8": @(MTISIMDTypeUInt8),
                         @"uint16": @(MTISIMDTypeUInt16),
 
-                        }
-     forKeyedSubscript:@"MTISIMDType"];
+        };
+    });
+    return map;
+}
+
+MTISIMDType MTISIMDTypeFromString(NSString *type) {
+    return [MTISIMDTypeNameValueMap()[type] integerValue];
+}
+
+void MTISIMDTypeKVCSupportExportToJSContext(JSContext *context) {
+    [context setObject:MTISIMDTypeNameValueMap() forKeyedSubscript:@"MTISIMDType"];
 }
 
 void MTISetSIMDValueForKey(id object, NSString *key, MTIVector *value, MTISIMDType type) {

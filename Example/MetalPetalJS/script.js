@@ -22,8 +22,11 @@
         options: {"blendMode": "Multiply"}
     });
  
-    var filter = MTINativeFilter("MTIMPSGaussianBlurFilter");
-    filter.radius = 20.0;
+    var filter = MTINativeFilter("MTIMPSBoxBlurFilter");
+    filter["simd(int2, size)"] = MTIVector.fromIntValues([20,20]);
+    //filter.$int2_size = MTIVector.fromIntValues([20,20]);
+    //console.log(filter["simd(int2, size)"]);
+    //MTISetSIMDValueForKey(filter.nativeObject, "size", MTIVector.fromIntValues([10,10]), MTISIMDType.int2);
     filter.inputImage = image;
     
     var blurredImage = filter.outputImage;

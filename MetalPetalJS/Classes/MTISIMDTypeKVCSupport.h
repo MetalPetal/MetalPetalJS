@@ -12,7 +12,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, MTISIMDType) {
+typedef NS_ENUM(NSInteger, MTISIMDType) {
+    MTISIMDTypeUnknown,
     MTISIMDTypeFloat2,
     MTISIMDTypeFloat3,
     MTISIMDTypeFloat4,
@@ -39,7 +40,9 @@ typedef NS_ENUM(NSUInteger, MTISIMDType) {
     MTISIMDTypeUInt16
 };
 
-FOUNDATION_EXPORT void MTISIMDTypeExportToJSContext(JSContext *context);
+FOUNDATION_EXPORT MTISIMDType MTISIMDTypeFromString(NSString *type);
+
+FOUNDATION_EXPORT void MTISIMDTypeKVCSupportExportToJSContext(JSContext *context);
 
 FOUNDATION_EXPORT void MTISetSIMDValueForKey(id object, NSString *key, MTIVector *value, MTISIMDType type);
 

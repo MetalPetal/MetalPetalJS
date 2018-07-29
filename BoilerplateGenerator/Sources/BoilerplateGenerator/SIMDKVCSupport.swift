@@ -53,11 +53,13 @@ struct SIMDTypeKVCSupportCodeGenerator {
 
         NS_ASSUME_NONNULL_BEGIN
 
-        typedef NS_ENUM(NSUInteger, MTISIMDType) {
+        typedef NS_ENUM(NSInteger, MTISIMDType) {
             {MTISIMDTYPES}
         };
+        
+        FOUNDATION_EXPORT MTISIMDType MTISIMDTypeFromString(NSString *type);
 
-        FOUNDATION_EXPORT void MTISIMDTypeExportToJSContext(JSContext *context);
+        FOUNDATION_EXPORT void MTISIMDTypeKVCSupportExportToJSContext(JSContext *context);
 
         FOUNDATION_EXPORT void MTISetSIMDValueForKey(id object, NSString *key, MTIVector *value, MTISIMDType type);
 
@@ -73,7 +75,7 @@ struct SIMDTypeKVCSupportCodeGenerator {
         }
 
         func makeContent() -> String {
-            return self.template.replacingOccurrences(of: "{MTISIMDTYPES}", with: self.types.reduce("", {
+            return self.template.replacingOccurrences(of: "{MTISIMDTYPES}", with: self.types.reduce("MTISIMDTypeUnknown", {
                 $0.count > 0 ? ($0 + ",\n    " + $1) : $1
             }))
         }
@@ -93,11 +95,23 @@ struct SIMDTypeKVCSupportCodeGenerator {
         #import "MTISIMDTypeKVCSupport.h"
         @import ObjectiveC;
 
-        FOUNDATION_EXPORT void MTISIMDTypeExportToJSContext(JSContext *context) {
-            [context setObject:@{
-        {SIMDTYPE_JS_EXPORT}
-                                }
-             forKeyedSubscript:@"MTISIMDType"];
+        static NSDictionary * MTISIMDTypeNameValueMap(void) {
+            static NSDictionary *map;
+            static dispatch_once_t onceToken;
+            dispatch_once(&onceToken, ^{
+                map = @{
+        {SIMDTYPE_NAME_VALUE_MAP}
+                };
+            });
+            return map;
+        }
+
+        MTISIMDType MTISIMDTypeFromString(NSString *type) {
+            return [MTISIMDTypeNameValueMap()[type] integerValue];
+        }
+        
+        void MTISIMDTypeKVCSupportExportToJSContext(JSContext *context) {
+            [context setObject:MTISIMDTypeNameValueMap() forKeyedSubscript:@"MTISIMDType"];
         }
 
         void MTISetSIMDValueForKey(id object, NSString *key, MTIVector *value, MTISIMDType type) {
@@ -156,7 +170,7 @@ struct SIMDTypeKVCSupportCodeGenerator {
         func makeContent() -> String {
             var c = self.template.replacingOccurrences(of: "{SIMD_VALUE_SET}", with: self.setters)
             c = c.replacingOccurrences(of: "{SIMD_VALUE_GET}", with: self.getters)
-            c = c.replacingOccurrences(of: "{SIMDTYPE_JS_EXPORT}", with: self.exports)
+            c = c.replacingOccurrences(of: "{SIMDTYPE_NAME_VALUE_MAP}", with: self.exports)
             return c
         }
     }

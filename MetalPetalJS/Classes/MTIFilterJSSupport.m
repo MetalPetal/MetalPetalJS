@@ -6,6 +6,7 @@
 //
 
 #import "MTIFilterJSSupport.h"
+#import "MTISIMDTypeKVCSupport.h"
 
 @implementation MTIBlendFilter (MTIFilterCreationOptions)
 
@@ -16,6 +17,33 @@
 }
 
 @end
+
+static BOOL MTIJSNativeFilterParseSIMDTypeInfo(NSString *input, NSString **key, MTISIMDType *type) {
+    NSCParameterAssert([input length] > 6);
+    NSCParameterAssert([input hasPrefix:@"simd("]);
+    if (input.length <= 6 || ![input hasPrefix:@"simd("]){
+        return NO;
+    }
+    NSArray *components = [[input substringWithRange:NSMakeRange(5, input.length - 6)] componentsSeparatedByString:@","];
+    NSCParameterAssert(components.count == 2);
+    if (components.count != 2) {
+        return NO;
+    }
+    
+    NSString *simdType = [components.firstObject stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    MTISIMDType t = MTISIMDTypeFromString(simdType);
+    
+    NSCAssert(t != MTISIMDTypeUnknown, @"");
+    
+    if (t == MTISIMDTypeUnknown) {
+        return NO;
+    }
+    
+    *key = [components.lastObject stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    *type = t;
+    
+    return YES;
+}
 
 @interface MTIJSNativeFilter: NSObject <MTIFilterJSSupport>
 
@@ -45,6 +73,16 @@
         return NO;
     }
     
+    if ([key hasPrefix:@"simd("]) {
+        NSString *k = nil;
+        MTISIMDType t = MTISIMDTypeUnknown;
+        if (MTIJSNativeFilterParseSIMDTypeInfo(key, &k, &t)) {
+            MTISetSIMDValueForKey(self.filter, k, value, t);
+            return YES;
+        }
+        return NO;
+    }
+    
     BOOL result = NO;
     @try {
         [_filter setValue:value forKey:key];
@@ -57,6 +95,15 @@
 
 - (id)valueForPropertyKey:(NSString *)key {
     if ([key isEqualToString:@"__proto__"]) {
+        return nil;
+    }
+    
+    if ([key hasPrefix:@"simd("]) {
+        NSString *k = nil;
+        MTISIMDType t = MTISIMDTypeUnknown;
+        if (MTIJSNativeFilterParseSIMDTypeInfo(key, &k, &t)) {
+            return MTIGetSIMDValueForKey(self.filter, k, t);
+        }
         return nil;
     }
     
