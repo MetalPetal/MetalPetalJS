@@ -19,18 +19,13 @@
 @end
 
 static BOOL MTIJSNativeFilterParseSIMDTypeInfo(NSString *input, NSString **key, MTISIMDType *type) {
-    NSCParameterAssert([input length] > 6);
-    NSCParameterAssert([input hasPrefix:@"simd("]);
-    if (input.length <= 6 || ![input hasPrefix:@"simd("]){
-        return NO;
-    }
-    NSArray *components = [[input substringWithRange:NSMakeRange(5, input.length - 6)] componentsSeparatedByString:@","];
+    NSArray *components = [input componentsSeparatedByString:@"$"];
     NSCParameterAssert(components.count == 2);
     if (components.count != 2) {
         return NO;
     }
     
-    NSString *simdType = [components.firstObject stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    NSString *simdType = components.lastObject;
     MTISIMDType t = MTISIMDTypeFromString(simdType);
     
     NSCAssert(t != MTISIMDTypeUnknown, @"");
@@ -39,7 +34,7 @@ static BOOL MTIJSNativeFilterParseSIMDTypeInfo(NSString *input, NSString **key, 
         return NO;
     }
     
-    *key = [components.lastObject stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet];
+    *key = components.firstObject;
     *type = t;
     
     return YES;
@@ -73,7 +68,7 @@ static BOOL MTIJSNativeFilterParseSIMDTypeInfo(NSString *input, NSString **key, 
         return NO;
     }
     
-    if ([key hasPrefix:@"simd("]) {
+    if ([key containsString:@"$"]) {
         NSString *k = nil;
         MTISIMDType t = MTISIMDTypeUnknown;
         if (MTIJSNativeFilterParseSIMDTypeInfo(key, &k, &t)) {
@@ -98,7 +93,7 @@ static BOOL MTIJSNativeFilterParseSIMDTypeInfo(NSString *input, NSString **key, 
         return nil;
     }
     
-    if ([key hasPrefix:@"simd("]) {
+    if ([key containsString:@"$"]) {
         NSString *k = nil;
         MTISIMDType t = MTISIMDTypeUnknown;
         if (MTIJSNativeFilterParseSIMDTypeInfo(key, &k, &t)) {
