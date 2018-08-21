@@ -36,15 +36,15 @@
 - (CGPoint)positionInPixelForBackgroundSize:(CGSize)backgroundSize;
 
 + (instancetype)layerWithContent:(MTIImage *)content
-               contentIsFlipped:(BOOL)contentIsFlipped
-                  contentRegion:(CGRect)contentRegion
-                compositingMask:(nullable MTIMask *)compositingMask
-                     layoutUnit:(MTILayerLayoutUnit)layoutUnit
-                       position:(CGPoint)position
-                           size:(CGSize)size
-                       rotation:(float)rotation
-                        opacity:(float)opacity
-                      blendMode:(MTIBlendMode)blendMode;
+                contentIsFlipped:(BOOL)contentIsFlipped
+                   contentRegion:(CGRect)contentRegion
+                       blendMode:(MTIBlendMode)blendMode
+                 compositingMask:(MTIMask *)compositingMask
+                      layoutUnit:(MTILayerLayoutUnit)layoutUnit
+                        position:(CGPoint)position
+                            size:(CGSize)size
+                        rotation:(float)rotation
+                         opacity:(float)opacity;
 
 @end
 

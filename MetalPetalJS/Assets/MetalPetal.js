@@ -104,17 +104,17 @@ MTIMask.build = function(desc) {
 /* -- MTILayer -- */
 
 MTILayer.build = function(desc) {
-    return MTILayer.layerWithContentContentIsFlippedContentRegionCompositingMaskLayoutUnitPositionSizeRotationOpacityBlendMode(
+    return MTILayer.layerWithContentContentIsFlippedContentRegionBlendModeCompositingMaskLayoutUnitPositionSizeRotationOpacity(
         desc.content,
         desc.contentIsFlipped,
-        (desc.contentRegion || {origin: {x: 0, y: 0}, size: {width: 1, height: 1}}),
+        (desc.contentRegion || {x: 0, y: 0, width: desc.content.size.width, height: desc.content.size.height}),
+        desc.blendMode,
         desc.compositingMask,
         desc.layoutUnit,
         desc.position,
         desc.size,
         desc.rotation,
-        desc.opacity,
-        desc.blendMode
+        desc.opacity
     );
 }
 
