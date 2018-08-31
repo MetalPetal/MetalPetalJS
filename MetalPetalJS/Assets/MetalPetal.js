@@ -81,6 +81,12 @@ MTIRenderCommand.perform = function(parameters) {
     }
 }
 
+/* -- MTIVertices -- */
+
+MTIVertices.build = function(parameters) {
+    return MTIVertices.verticesFromJSONDescriptors(parameters);
+}
+
 /* -- MTIVector -- */
 
 MTIVector.fromFloatValues = function(values) {

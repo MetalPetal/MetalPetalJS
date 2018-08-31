@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)fullViewportSquareVertices;
 
++ (instancetype)verticesFromJSONDescriptors:(NSArray *)json;
+
 @end
 
 @interface MTIVertices (JSSupport) <MTIVerticesJSSupport>
