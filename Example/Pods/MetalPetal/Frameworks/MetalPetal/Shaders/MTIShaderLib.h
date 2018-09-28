@@ -65,6 +65,11 @@ namespace metalpetal {
         return x - y * floor(x/y);
     }
     
+    template <typename T, typename _E = typename enable_if<is_same<float, typename make_scalar<T>::type>::value>::type>
+    METAL_FUNC T sRGBToLinear(T x) {
+        return sign(x)*mix(abs(x)*0.077399380804954, pow(abs(x)*0.947867298578199 + 0.052132701421801, 2.4), step(0.04045, abs(x)));
+    }
+    
     METAL_FUNC float4 unpremultiply(float4 s) {
         return float4(s.rgb/max(s.a,0.00001), s.a);
     }
@@ -136,6 +141,10 @@ namespace metalpetal {
         return float3(r,g,b);
     }
     
+    METAL_FUNC float lum(float4 C) {
+        return 0.299 * C.r + 0.587 * C.g + 0.114 * C.b;
+    }
+    
     //source over blend
     METAL_FUNC float4 normalBlend(float4 Cb, float4 Cs) {
         float4 dst = premultiply(Cb);
@@ -147,7 +156,6 @@ namespace metalpetal {
         float4 Cr = float4((1 - Cb.a) * Cs.rgb + Cb.a * saturate(B.rgb), Cs.a);
         return normalBlend(Cb, Cr);
     }
-    
     
     // multiply
     METAL_FUNC float4 multiplyBlend(float4 Cb, float4 Cs) {
@@ -197,9 +205,47 @@ namespace metalpetal {
         return blendBaseAlpha(Cb, Cs, B);
     }
     
+    // darkerColor
+    METAL_FUNC float4 darkerColorBlend(float4 Cb, float4 Cs) {
+        float4 B;
+        if (lum(Cs) < lum(Cb)) {
+            B = Cs;
+        } else {
+            B = Cb;
+        }
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
     // lighten
     METAL_FUNC float4 lightenBlend(float4 Cb, float4 Cs) {
         float4 B = float4(max(Cs.r, Cb.r), max(Cs.g, Cb.g), max(Cs.b, Cb.b), Cs.a);
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // lighterColor
+    METAL_FUNC float4 lighterColorBlend(float4 Cb, float4 Cs) {
+        float4 B;
+        if (lum(Cs) > lum(Cb)) {
+            B = Cs;
+        } else {
+            B = Cb;
+        }
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // colorBurn
+    METAL_FUNC float colorBurnBlendSingleChannel(float b, float f) {
+        if (b == 1) {
+            return 1;
+        } else if (f == 0) {
+            return 0;
+        } else {
+            return 1.0 - min(1.0, (1 - b) / f);
+        }
+    }
+    
+    METAL_FUNC float4 colorBurnBlend(float4 Cb, float4 Cs) {
+        float4 B = float4(colorBurnBlendSingleChannel(Cb.r, Cs.r), colorBurnBlendSingleChannel(Cb.g, Cs.g), colorBurnBlendSingleChannel(Cb.b, Cs.b), Cs.a);
         return blendBaseAlpha(Cb, Cs, B);
     }
     
@@ -218,18 +264,55 @@ namespace metalpetal {
         return blendBaseAlpha(Cb, Cs, B);
     }
 
-    // colorBurn
-    METAL_FUNC float colorBurnBlendSingleChannel(float b, float f) {
-        if (b == 1) {
-            return 1;
-        } else if (f == 0) {
-            return 0;
+    // pinLight
+    METAL_FUNC float pinLightBlendSingleChannel(float b, float s) {
+
+        if (s > 0.5) {
+            return max(b , 2 * (s - 0.5));
         } else {
-            return 1.0 - min(1.0, (1 - b) / f);
+            return min(b, 2 * s);
         }
     }
-    METAL_FUNC float4 colorBurnBlend(float4 Cb, float4 Cs) {
-        float4 B = float4(colorBurnBlendSingleChannel(Cb.r, Cs.r), colorBurnBlendSingleChannel(Cb.g, Cs.g), colorBurnBlendSingleChannel(Cb.b, Cs.b), Cs.a);
+    
+    METAL_FUNC float4 pinLightBlend(float4 Cb, float4 Cs) {
+        float4 B = float4(pinLightBlendSingleChannel(Cb.r, Cs.r), pinLightBlendSingleChannel(Cb.g, Cs.g), pinLightBlendSingleChannel(Cb.b, Cs.b), Cs.a);
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // vividLight
+    METAL_FUNC float vividLightBlendSingleChannel(float b, float s) {
+        if (s <= 0.5) {
+            if (s == 0) {
+                return s;
+            }
+            return 1 - (1 - b) / (2 * s);
+        } else {
+            if (s == 1) {
+                return s;
+            }
+            return b / (2 * (1 - s));
+        }
+    }
+    
+    METAL_FUNC float4 vividLightBlend(float4 Cb, float4 Cs) {
+        float4 B = float4(vividLightBlendSingleChannel(Cb.r, Cs.r), vividLightBlendSingleChannel(Cb.g, Cs.g), vividLightBlendSingleChannel(Cb.b, Cs.b), Cs.a);
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // hardMix
+    METAL_FUNC float hardMixBlendSingleChannel(float b, float s) {
+        if (b < 1 - s) {
+            return 0;
+        } else if (b == 1 - s) {
+            return 0.5;
+        } else {
+            return 1;
+        }
+    }
+    
+    METAL_FUNC float4 hardMixBlend(float4 Cb, float4 Cs) {
+
+        float4 B = float4(hardMixBlendSingleChannel(Cb.r, Cs.r), hardMixBlendSingleChannel(Cb.g, Cs.g), hardMixBlendSingleChannel(Cb.b, Cs.b), Cs.a);
         return blendBaseAlpha(Cb, Cs, B);
     }
     
@@ -245,12 +328,41 @@ namespace metalpetal {
         return blendBaseAlpha(Cb, Cs, B);
     }
     
-    // add
+    // divide
+    METAL_FUNC float divideBlendSingleChannel(float b, float f) {
+        if (f == 0) {
+            return 1;
+        } else {
+            return min(b / f, 1.0);
+        }
+    }
+    METAL_FUNC float4 divideBlend(float4 Cb, float4 Cs) {
+        float4 B = float4(divideBlendSingleChannel(Cb.r, Cs.r), divideBlendSingleChannel(Cb.g, Cs.g), divideBlendSingleChannel(Cb.b, Cs.b), Cs.a);
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // add also linearDodge
     METAL_FUNC float4 addBlend(float4 Cb, float4 Cs) {
         float4 B = min(Cb + Cs, 1.0);
         return blendBaseAlpha(Cb, Cs, B);
     }
     
+    METAL_FUNC float4 linearDodgeBlend(float4 Cb, float4 Cs) {
+        return addBlend(Cb,Cs);
+    }
+    
+    // subtract
+    METAL_FUNC float4 subtractBlend(float4 Cb, float4 Cs) {
+        float4 B = Cb - Cs;
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+    
+    // linearBurn
+    METAL_FUNC float4 linearBurnBlend(float4 Cb, float4 Cs) {
+        float4 B = max(Cb + Cs - 1, 0);
+        return blendBaseAlpha(Cb, Cs, B);
+    }
+
     //Linear Light
     METAL_FUNC float4 linearLightBlend(float4 Cb, float4 Cs) {
         float4 B  = Cb + 2.0 * Cs - 1.0;
@@ -259,10 +371,6 @@ namespace metalpetal {
     
     //---
     // non-separable blend
-    METAL_FUNC float lum(float4 C) {
-        return 0.3 * C.r + 0.59 * C.g + 0.11 * C.b;
-    }
-    
     METAL_FUNC float4 clipColor(float4 C) {
         float l = lum(C);
         float  n = min(C.r, min(C.g, C.b));

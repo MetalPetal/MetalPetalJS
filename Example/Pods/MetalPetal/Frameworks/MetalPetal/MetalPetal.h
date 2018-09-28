@@ -4,6 +4,7 @@
 #import <MetalPetal/MTIComputePipeline.h>
 #import <MetalPetal/MTIMPSBoxBlurFilter.h>
 #import <MetalPetal/MTIMPSConvolutionFilter.h>
+#import <MetalPetal/MTIMPSDefinitionFilter.h>
 #import <MetalPetal/MTIColorMatrixFilter.h>
 #import <MetalPetal/MTIColorLookupFilter.h>
 #import <MetalPetal/MTIFilter.h>
@@ -42,6 +43,7 @@
 #import <MetalPetal/MTIImageOrientation.h>
 #import <MetalPetal/MTIWeakToStrongObjectsMapTable.h>
 #import <MetalPetal/MTIRenderGraphOptimization.h>
+#import <MetalPetal/MTIMemoryWarningObserver.h>
 #import <MetalPetal/MTIImageProperties.h>
 #import <MetalPetal/MTIContext+Rendering.h>
 #import <MetalPetal/MTIMask.h>

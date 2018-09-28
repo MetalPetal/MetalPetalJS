@@ -1,7 +1,7 @@
 PODS:
-  - MetalPetal (0.7.1):
-    - MetalPetal/Core (= 0.7.1)
-  - MetalPetal/Core (0.7.1)
+  - MetalPetal (0.8.2):
+    - MetalPetal/Core (= 0.8.2)
+  - MetalPetal/Core (0.8.2)
   - MetalPetalJS (0.1.0):
     - MetalPetal
 
@@ -17,9 +17,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  MetalPetal: b33f5998c8fef142c7da5889a5fcce763d091730
+  MetalPetal: b56cc459b0e54acecbb58070c50cb9d2c0f984b2
   MetalPetalJS: bcb6335ff36a242c72193c2f127edda48bef7cc7
 
 PODFILE CHECKSUM: 3dc712f8046fdc8b89c58c5689301050200676f8
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.0.beta.1

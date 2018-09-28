@@ -159,19 +159,6 @@ namespace metalpetal {
         return colorLookup2DStripLUT(textureColor, dimension, false, intensity, lutTexture, lutSamper);
     }
 
-    vertex VertexOut imageTransformVertexShader(
-                                           const device VertexIn * vertices [[ buffer(0) ]],
-                                           constant float4x4 & transformMatrix [[ buffer(1) ]],
-                                           uint vid [[ vertex_id ]]
-                                           ) {
-        VertexOut outVertex;
-        VertexIn inVertex = vertices[vid];
-        outVertex.position = inVertex.position * transformMatrix;
-        outVertex.position.z = 0.0;
-        outVertex.textureCoordinate = inVertex.textureCoordinate;
-        return outVertex;
-    }
-
     fragment float4 blendWithMask(
                                          VertexOut vertexIn [[stage_in]],
                                          texture2d<float, access::sample> overlayTexture [[texture(0)]],
@@ -204,14 +191,35 @@ namespace metalpetal {
         : adjustSaturation(textureColor, amount, grayColorTransform);
     }
 
-    fragment float4 rToGray(
+    fragment float4 rToMonochrome(
                             VertexOut vertexIn [[stage_in]],
                             texture2d<float, access::sample> sourceTexture [[texture(0)]],
                             sampler sourceSampler [[sampler(0)]],
-                            constant bool & invert [[buffer(0)]]
+                            constant bool & invert [[buffer(0)]],
+                            constant bool & convertSRGBToLinear [[buffer(1)]]
                            ) {
         float4 textureColor = sourceTexture.sample(sourceSampler, vertexIn.textureCoordinate);
+        if (convertSRGBToLinear) {
+            textureColor.r = sRGBToLinear(textureColor.r);
+        }
         return float4(float3(invert ? 1.0 - textureColor.r : textureColor.r),1.0);
+    }
+    
+    fragment float4 rgToMonochrome(
+                            VertexOut vertexIn [[stage_in]],
+                            texture2d<float, access::sample> sourceTexture [[texture(0)]],
+                            sampler sourceSampler [[sampler(0)]],
+                            constant int & alphaChannelIndex [[buffer(0)]],
+                            constant bool & unpremultiplyAlpha [[buffer(1)]],
+                            constant bool & convertSRGBToLinear [[buffer(2)]]
+                            ) {
+        float4 textureColor = sourceTexture.sample(sourceSampler, vertexIn.textureCoordinate);
+        float alpha = textureColor[alphaChannelIndex];
+        float color = textureColor[1 - alphaChannelIndex] / (unpremultiplyAlpha ? max(alpha,0.00001) : 1.0);
+        if (convertSRGBToLinear) {
+            color = sRGBToLinear(color);
+        }
+        return float4(float3(color),alpha);
     }
 
     fragment float4 chromaKeyBlend(
@@ -416,4 +424,41 @@ namespace metalpetal {
         //return float4(float3(value.rgb)/float3(maxValue.rgb), 1.0);
     }
     */
+    
+    namespace definition {
+        
+        float4 meaningBlur(float4 im, float4 b) {
+            float4 result = im;
+            float thresh = 0.1;
+            float g1 = max(max(im.r, im.g), im.b);
+            float g2 = dot(b.rgb, float3(1.0 / 3.0));
+            float diff = max(g2 - g1, -1.0);
+            diff = smoothstep(0.1 - thresh, 0.1 + thresh, diff);
+            result.rgb = mix(im.rgb, b.rgb, diff + 0.5);
+            return result;
+        }
+        
+        fragment float4 clarity(VertexOut vertexIn [[stage_in]],
+                                texture2d<float, access::sample> sourceTexture [[texture(0)]],
+                                texture2d<float, access::sample> blurTexture [[texture(1)]],
+                                sampler sourceSampler [[sampler(0)]],
+                                sampler blurSampler [[sampler(1)]],
+                                constant float &intensity) {
+            float4 s = sourceTexture.sample(sourceSampler, vertexIn.textureCoordinate);
+            
+            float4 b = blurTexture.sample(blurSampler, vertexIn.textureCoordinate);
+            b = meaningBlur(s, b);
+            
+            float sl = (s.r + s.g + s.b);
+            float bl = (b.r + b.g + b.b);
+            float dl = sl + (sl - bl) * intensity;
+            float mult = dl / max(sl, 0.0001);
+            mult = 1.571 * (mult - 1.0);
+            mult = mult / (1.0 + abs(mult));
+            mult += 1.0;
+            mult = clamp(mult, 1.0 - 0.5 * abs(intensity), 1.0 + 1.0 * abs(intensity));
+            s.rgb = s.rgb * mult;
+            return s;
+        }
+    }
 }
