@@ -9,8 +9,8 @@
 
 @implementation MTILayer (JSSupport)
 
-+ (instancetype)layerWithContent:(MTIImage *)content contentIsFlipped:(BOOL)contentIsFlipped contentRegion:(CGRect)contentRegion blendMode:(MTIBlendMode)blendMode compositingMask:(MTIMask *)compositingMask layoutUnit:(MTILayerLayoutUnit)layoutUnit position:(CGPoint)position size:(CGSize)size rotation:(float)rotation opacity:(float)opacity {
-    return [[MTILayer alloc] initWithContent:content contentIsFlipped:contentIsFlipped contentRegion:contentRegion compositingMask:compositingMask layoutUnit:layoutUnit position:position size:size rotation:rotation opacity:opacity blendMode:blendMode];
++ (instancetype)layerWithContent:(MTIImage *)content contentRegion:(CGRect)contentRegion contentFlipOptions:(MTILayerFlipOptions)contentFlipOptions blendMode:(MTIBlendMode)blendMode compositingMask:(MTIMask *)compositingMask layoutUnit:(MTILayerLayoutUnit)layoutUnit position:(CGPoint)position size:(CGSize)size rotation:(float)rotation opacity:(float)opacity {
+    return [[MTILayer alloc] initWithContent:content contentRegion:contentRegion contentFlipOptions:contentFlipOptions compositingMask:compositingMask layoutUnit:layoutUnit position:position size:size rotation:rotation opacity:opacity blendMode:blendMode];
 }
 
 @end

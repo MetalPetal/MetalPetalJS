@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong, readonly) MTIImage *content;
 
-@property (nonatomic, readonly) BOOL contentIsFlipped;
+@property (nonatomic, readonly) MTILayerFlipOptions contentFlipOptions;
 
 @property (nonatomic, readonly) CGRect contentRegion; //pixel
 
@@ -36,10 +36,10 @@
 - (CGPoint)positionInPixelForBackgroundSize:(CGSize)backgroundSize;
 
 + (instancetype)layerWithContent:(MTIImage *)content
-                contentIsFlipped:(BOOL)contentIsFlipped
                    contentRegion:(CGRect)contentRegion
+              contentFlipOptions:(MTILayerFlipOptions)contentFlipOptions
                        blendMode:(MTIBlendMode)blendMode
-                 compositingMask:(MTIMask *)compositingMask
+                 compositingMask:(nullable MTIMask *)compositingMask
                       layoutUnit:(MTILayerLayoutUnit)layoutUnit
                         position:(CGPoint)position
                             size:(CGSize)size

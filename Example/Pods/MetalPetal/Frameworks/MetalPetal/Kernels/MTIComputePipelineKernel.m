@@ -19,11 +19,47 @@
 #import "MTIImagePromiseDebug.h"
 #import "MTIContext+Internal.h"
 
+@interface MTIComputeFunctionDispatchOptions ()
+
+@property (nonatomic, readonly) MTLSize threads;
+@property (nonatomic, readonly) MTLSize threadgroups;
+@property (nonatomic, readonly) MTLSize threadsPerThreadgroup;
+
+@property (nonatomic, copy, readonly) void (^generator)(id<MTLComputePipelineState> pipelineState, MTLSize *threads, MTLSize *threadgroups, MTLSize *threadsPerThreadgroup);
+
+@end
+
+@implementation MTIComputeFunctionDispatchOptions
+
+- (instancetype)initWithThreads:(MTLSize)threads threadgroups:(MTLSize)threadgroups threadsPerThreadgroup:(MTLSize)threadsPerThreadgroup {
+    if (self = [super init]) {
+        _threads = threads;
+        _threadgroups = threadgroups;
+        _threadsPerThreadgroup = threadsPerThreadgroup;
+    }
+    return self;
+}
+
+- (instancetype)initWithGenerator:(void (^)(id<MTLComputePipelineState> _Nonnull, MTLSize * _Nonnull, MTLSize * _Nonnull, MTLSize * _Nonnull))block {
+    if (self = [super init]) {
+        _generator = [block copy];
+    }
+    return self;
+}
+
+- (id)copyWithZone:(NSZone *)zone {
+    return self;
+}
+
+@end
+
 @interface MTIImageComputeRecipe : NSObject <MTIImagePromise>
 
 @property (nonatomic,copy,readonly) NSArray<MTIImage *> *inputImages;
 
 @property (nonatomic,strong,readonly) MTIComputePipelineKernel *kernel;
+
+@property (nonatomic,copy,readonly) MTIComputeFunctionDispatchOptions *dispatchOptions;
 
 @property (nonatomic,copy,readonly) NSDictionary<NSString *, id> *functionParameters;
 
@@ -49,7 +85,6 @@
     };
     for (NSUInteger index = 0; index < inputResolutionsCount; index += 1) {
         MTIImage *image = self.inputImages[index];
-        NSParameterAssert([self.kernel.alphaTypeHandlingRule canAcceptAlphaType:image.alphaType]);
         id<MTIImagePromiseResolution> resolution = [renderingContext resolutionForImage:image error:&error];
         if (error) {
             if (inOutError) {
@@ -115,11 +150,25 @@
     NSUInteger h = computePipeline.state.maxTotalThreadsPerThreadgroup / w;
     MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
     MTLSize threadgroupsPerGrid = MTLSizeMake((_dimensions.width + w - 1) / w, (_dimensions.height + h - 1) / h, _dimensions.depth);
+    MTLSize threadsPerGrid = MTLSizeMake(_dimensions.width,_dimensions.height,_dimensions.depth);
     
-    #if TARGET_OS_IPHONE
-    if (@available(iOS 11.0, *)) {
-        if ([renderingContext.context.device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily4_v1]) {
-            MTLSize threadsPerGrid = MTLSizeMake(_dimensions.width,_dimensions.height,_dimensions.depth);
+    if (_dispatchOptions) {
+        if (_dispatchOptions.generator) {
+            _dispatchOptions.generator(computePipeline.state, &threadsPerGrid, &threadgroupsPerGrid, &threadsPerThreadgroup);
+        } else {
+            threadsPerGrid = _dispatchOptions.threads;
+            threadgroupsPerGrid = _dispatchOptions.threadgroups;
+            threadsPerThreadgroup = _dispatchOptions.threadsPerThreadgroup;
+        }
+    }
+    
+    if (@available(iOS 11.0, macOS 10.13, *)) {
+        #if TARGET_OS_IPHONE
+        MTLFeatureSet featureSetSupportsNonUniformThreadgroupSize = MTLFeatureSet_iOS_GPUFamily4_v1;
+        #else
+        MTLFeatureSet featureSetSupportsNonUniformThreadgroupSize = MTLFeatureSet_macOS_GPUFamily1_v3;
+        #endif
+        if ([renderingContext.context.device supportsFeatureSet:featureSetSupportsNonUniformThreadgroupSize]) {
             [commandEncoder dispatchThreads:threadsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
         } else {
             [commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
@@ -127,9 +176,6 @@
     } else {
         [commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
     }
-    #else
-    [commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
-    #endif
     
     [commandEncoder endEncoding];
     
@@ -144,12 +190,29 @@
     return self;
 }
 
-- (instancetype)initWithKernel: (MTIComputePipelineKernel *)kernel inputImages: (NSArray<MTIImage *> *)inputImages functionParameters: (NSDictionary<NSString *,id> *)functionParameters outputTextureDimensions:(MTITextureDimensions)outputTextureDimensions outputPixelFormat:(MTLPixelFormat)outputPixelFormat {
+- (instancetype)initWithKernel:(MTIComputePipelineKernel *)kernel
+                   inputImages:(NSArray<MTIImage *> *)inputImages
+            functionParameters:(NSDictionary<NSString *,id> *)functionParameters
+               dispatchOptions:(nullable MTIComputeFunctionDispatchOptions *)dispatchOptions
+       outputTextureDimensions:(MTITextureDimensions)outputTextureDimensions
+             outputPixelFormat:(MTLPixelFormat)outputPixelFormat {
     if (self = [super init]) {
+        NSParameterAssert({
+            /* Alpha Type Assert */
+            BOOL canAcceptAlphaType = YES;
+            for (MTIImage *image in inputImages) {
+                if (![kernel.alphaTypeHandlingRule canAcceptAlphaType:image.alphaType]) {
+                    canAcceptAlphaType = NO;
+                    break;
+                }
+            }
+            canAcceptAlphaType;
+        });
         _inputImages = inputImages;
         _kernel = kernel;
         _functionParameters = functionParameters;
         _dimensions = outputTextureDimensions;
+        _dispatchOptions = [dispatchOptions copy];
         _outputPixelFormat = outputPixelFormat;
         _alphaType = [kernel.alphaTypeHandlingRule outputAlphaTypeForInputImages:inputImages];
     }
@@ -158,7 +221,7 @@
 
 - (instancetype)promiseByUpdatingDependencies:(NSArray<MTIImage *> *)dependencies {
     NSParameterAssert(dependencies.count == self.dependencies.count);
-    return [[MTIImageComputeRecipe alloc] initWithKernel:self.kernel inputImages:dependencies functionParameters:self.functionParameters outputTextureDimensions:self.dimensions outputPixelFormat:self.outputPixelFormat];
+    return [[MTIImageComputeRecipe alloc] initWithKernel:_kernel inputImages:dependencies functionParameters:_functionParameters dispatchOptions:_dispatchOptions outputTextureDimensions:_dimensions outputPixelFormat:_outputPixelFormat];
 }
 
 - (MTIImagePromiseDebugInfo *)debugInfo {
@@ -198,9 +261,14 @@
 }
 
 - (MTIImage *)applyToInputImages:(NSArray<MTIImage *> *)images parameters:(NSDictionary<NSString *,id> *)parameters outputTextureDimensions:(MTITextureDimensions)outputTextureDimensions outputPixelFormat:(MTLPixelFormat)outputPixelFormat {
+    return [self applyToInputImages:images parameters:parameters dispatchOptions:nil outputTextureDimensions:outputTextureDimensions outputPixelFormat:outputPixelFormat];
+}
+
+- (MTIImage *)applyToInputImages:(NSArray<MTIImage *> *)images parameters:(NSDictionary<NSString *,id> *)parameters dispatchOptions:(MTIComputeFunctionDispatchOptions *)dispatchOptions outputTextureDimensions:(MTITextureDimensions)outputTextureDimensions outputPixelFormat:(MTLPixelFormat)outputPixelFormat {
     MTIImageComputeRecipe *receipt = [[MTIImageComputeRecipe alloc] initWithKernel:self
                                                                        inputImages:images
                                                                 functionParameters:parameters
+                                                                   dispatchOptions:dispatchOptions
                                                            outputTextureDimensions:outputTextureDimensions
                                                                  outputPixelFormat:outputPixelFormat];
     return [[MTIImage alloc] initWithPromise:receipt];

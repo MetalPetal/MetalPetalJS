@@ -12,9 +12,9 @@
 #import <MetalPetal/MTIRGBToneCurveFilter.h>
 #import <MetalPetal/MTIUnaryImageRenderingFilter.h>
 #import <MetalPetal/MTIMultilayerCompositingFilter.h>
-#import <MetalPetal/MTILensBlurFilter.h>
 #import <MetalPetal/MTIVibranceFilter.h>
 #import <MetalPetal/MTIBlendFilter.h>
+#import <MetalPetal/MTIHexagonalBokehBlurFilter.h>
 #import <MetalPetal/MTIPixellateFilter.h>
 #import <MetalPetal/MTIMPSGaussianBlurFilter.h>
 #import <MetalPetal/MTIColorHalftoneFilter.h>
@@ -61,6 +61,7 @@
 #import <MetalPetal/MTIVector+SIMD.h>
 #import <MetalPetal/MTITexturePool.h>
 #import <MetalPetal/MTIImagePromiseDebug.h>
+#import <MetalPetal/MTICVMetalTextureBridge.h>
 #import <MetalPetal/MTIImagePromise.h>
 #import <MetalPetal/MTITextureDimensions.h>
 #import <MetalPetal/MTIImageRenderingContext.h>
@@ -76,6 +77,7 @@
 #import <MetalPetal/MTKTextureLoaderExtensions.h>
 #import <MetalPetal/MTISamplerDescriptor.h>
 #import <MetalPetal/MTILayer.h>
+#import <MetalPetal/MTICVMetalTextureBridging.h>
 
 FOUNDATION_EXPORT double MetalPetalVersionNumber;
 FOUNDATION_EXPORT const unsigned char MetalPetalVersionString[];
