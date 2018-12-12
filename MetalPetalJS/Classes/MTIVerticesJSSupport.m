@@ -25,7 +25,9 @@
             }
         };
     }
-    return [[MTIVertices alloc] initWithVertices:vertices count:descriptors.count primitiveType:MTLPrimitiveTypeTriangleStrip];
+    MTIVertices *result = [[MTIVertices alloc] initWithVertices:vertices count:descriptors.count primitiveType:MTLPrimitiveTypeTriangleStrip];
+    free(vertices);
+    return result;
 }
 
 @end
