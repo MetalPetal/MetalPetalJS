@@ -9,6 +9,8 @@
 #import <JavascriptCore/JavascriptCore.h>
 #import <MetalPetal/MetalPetal.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol MTILayerJSSupport <JSExport>
 
 @property (nonatomic, strong, readonly) MTIImage *content;
@@ -51,3 +53,5 @@
 @interface MTILayer (JSSupport) <MTILayerJSSupport>
 
 @end
+
+NS_ASSUME_NONNULL_END

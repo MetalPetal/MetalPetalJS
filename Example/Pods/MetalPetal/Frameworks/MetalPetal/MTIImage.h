@@ -24,6 +24,7 @@ typedef NS_ENUM(NSInteger, MTIImageCachePolicy) {
     MTIImageCachePolicyPersistent
 } NS_SWIFT_NAME(MTIImage.CachePolicy);
 
+/// A representation of an image to be processed or produced.
 @interface MTIImage : NSObject <NSCopying>
 
 @property (nonatomic, readonly) MTIImageCachePolicy cachePolicy;
@@ -79,6 +80,8 @@ typedef NS_ENUM(NSInteger, MTIImageCachePolicy) {
 - (instancetype)initWithCIImage:(CIImage *)ciImage isOpaque:(BOOL)isOpaque;
 
 - (instancetype)initWithCIImage:(CIImage *)ciImage isOpaque:(BOOL)isOpaque options:(MTICIImageRenderingOptions *)options;
+
+- (instancetype)initWithCIImage:(CIImage *)ciImage bounds:(CGRect)bounds isOpaque:(BOOL)isOpaque options:(MTICIImageRenderingOptions *)options;
 
 
 - (nullable instancetype)initWithContentsOfURL:(NSURL *)URL options:(nullable NSDictionary<MTKTextureLoaderOption,id> *)options;

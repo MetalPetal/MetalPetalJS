@@ -9,10 +9,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Modes that describe how source colors blend with destination colors. See also: https://www.w3.org/TR/compositing-1/
 typedef NSString * MTIBlendMode NS_EXTENSIBLE_STRING_ENUM;
 
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeNormal;
-// FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeDissolve;
 
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeDarken;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeMultiply;
@@ -39,14 +39,11 @@ FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeExclusion;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeSubtract;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeDivide;
 
-// non-separable
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeHue;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeSaturation;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeColor;
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeLuminosity;
 
-
-//custom
 FOUNDATION_EXPORT MTIBlendMode const MTIBlendModeColorLookup512x512;
 
 @class MTIFunctionDescriptor;

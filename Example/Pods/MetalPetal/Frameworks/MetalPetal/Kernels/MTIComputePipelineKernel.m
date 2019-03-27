@@ -18,6 +18,7 @@
 #import "MTIDefer.h"
 #import "MTIImagePromiseDebug.h"
 #import "MTIContext+Internal.h"
+#import "MTIError.h"
 
 @interface MTIComputeFunctionDispatchOptions ()
 
@@ -71,7 +72,7 @@
 @synthesize dimensions = _dimensions;
 @synthesize alphaType = _alphaType;
 
-- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * __autoreleasing *)inOutError {
     NSError *error = nil;
     
     NSUInteger inputResolutionsCount = self.inputImages.count;
@@ -107,20 +108,22 @@
     
     MTLPixelFormat pixelFormat = (self.outputPixelFormat == MTIPixelFormatUnspecified) ? renderingContext.context.workingPixelFormat : self.outputPixelFormat;
     
-    MTLTextureDescriptor *textureDescriptor;
+    MTITextureDescriptor *textureDescriptor;
     if (_dimensions.depth > 1) {
-        textureDescriptor = [[MTLTextureDescriptor alloc] init];
-        textureDescriptor.textureType = MTLTextureType3D;
-        textureDescriptor.width = _dimensions.width;
-        textureDescriptor.height = _dimensions.height;
-        textureDescriptor.depth = _dimensions.depth;
-        textureDescriptor.pixelFormat = pixelFormat;
+        MTLTextureDescriptor *mtlTextureDescriptor;
+        mtlTextureDescriptor = [[MTLTextureDescriptor alloc] init];
+        mtlTextureDescriptor.textureType = MTLTextureType3D;
+        mtlTextureDescriptor.width = _dimensions.width;
+        mtlTextureDescriptor.height = _dimensions.height;
+        mtlTextureDescriptor.depth = _dimensions.depth;
+        mtlTextureDescriptor.pixelFormat = pixelFormat;
+        mtlTextureDescriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
+        textureDescriptor = [mtlTextureDescriptor newMTITextureDescriptor];
     } else {
-        textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:_dimensions.width height:_dimensions.height mipmapped:NO];
+        textureDescriptor = [MTITextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:_dimensions.width height:_dimensions.height usage:MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead];
     }
-    textureDescriptor.usage = MTLTextureUsageShaderWrite | MTLTextureUsageShaderRead;
 
-    MTIImagePromiseRenderTarget *renderTarget = [renderingContext.context newRenderTargetWithResuableTextureDescriptor:[textureDescriptor newMTITextureDescriptor] error:&error];
+    MTIImagePromiseRenderTarget *renderTarget = [renderingContext.context newRenderTargetWithResuableTextureDescriptor:textureDescriptor error:&error];
     if (error) {
         if (inOutError) {
             *inOutError = error;
@@ -129,6 +132,14 @@
     }
     
     __auto_type commandEncoder = [renderingContext.commandBuffer computeCommandEncoder];
+    
+    if (!commandEncoder) {
+        if (inOutError) {
+            *inOutError = MTIErrorCreate(MTIErrorFailedToCreateCommandEncoder, nil);
+        }
+        return nil;
+    }
+    
     [commandEncoder setComputePipelineState:computePipeline.state];
 
     for (NSUInteger index = 0; index < inputResolutionsCount; index += 1) {
@@ -245,7 +256,7 @@
     return self;
 }
 
-- (id)newKernelStateWithContext:(MTIContext *)context configuration:(id<MTIKernelConfiguration>)configuration error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (id)newKernelStateWithContext:(MTIContext *)context configuration:(id<MTIKernelConfiguration>)configuration error:(NSError * __autoreleasing *)inOutError {
     MTLComputePipelineDescriptor *computePipelineDescriptor = [[MTLComputePipelineDescriptor alloc] init];
     NSError *error;
     id<MTLFunction> computeFunction = [context functionWithDescriptor:self.computeFunctionDescriptor error:&error];

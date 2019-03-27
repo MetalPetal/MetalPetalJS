@@ -24,7 +24,7 @@ static NSString * const MTIColorConversionVertexFunctionName   = @"colorConversi
 static NSString * const MTIColorConversionFragmentFunctionName = @"colorConversionFragment";
 static NSString * const MTIColorConversionKernelFunctionName   = @"colorConversion";
 
-static const float colorConversionVertexData[16] =
+static const float MTIYUVColorConversionVertexData[16] =
 {
     -1.0, -1.0,  0.0, 1.0,
     1.0, -1.0,  1.0, 1.0,
@@ -33,14 +33,14 @@ static const float colorConversionVertexData[16] =
 };
 
 //Always use "struct X {}; typedef struct X X;" to define a struct, so that the struct can be encoded/archived with NSValue. ref: https://stackoverflow.com/a/12292033/1061004
-struct ColorConversion {
+struct MTIYUVColorConversion {
     matrix_float3x3 matrix;
     vector_float3 offset;
 };
-typedef struct ColorConversion ColorConversion;
+typedef struct MTIYUVColorConversion MTIYUVColorConversion;
 
 // BT.601
-static const ColorConversion kColorConversion601 = {
+static const MTIYUVColorConversion MTIYUVColorConversion601 = {
     .matrix = {
         .columns[0] = { 1.164,  1.164, 1.164, },
         .columns[1] = { 0.000, -0.392, 2.017, },
@@ -50,7 +50,7 @@ static const ColorConversion kColorConversion601 = {
 };
 
 // BT.601 Full Range
-static const ColorConversion kColorConversion601FullRange = {
+static const MTIYUVColorConversion MTIYUVColorConversion601FullRange = {
     .matrix = {
         .columns[0] = { 1.000,  1.000, 1.000, },
         .columns[1] = { 0.000, -0.343, 1.765, },
@@ -60,7 +60,7 @@ static const ColorConversion kColorConversion601FullRange = {
 };
 
 // BT.709
-static const ColorConversion kColorConversion709 = {
+static const MTIYUVColorConversion MTIYUVColorConversion709 = {
     .matrix = {
         .columns[0] = { 1.164,  1.164, 1.164, },
         .columns[1] = { 0.000, -0.213, 2.112, },
@@ -99,7 +99,8 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
             #if TARGET_OS_IPHONE
             return sRGB ? MTLPixelFormatR8Unorm_sRGB : MTLPixelFormatR8Unorm;
             #else
-            return MTLPixelFormatR8Unorm;
+            NSCParameterAssert(!sRGB); //R8Unorm_sRGB texture is not available on macOS.
+            return sRGB ? MTLPixelFormatInvalid : MTLPixelFormatR8Unorm;
             #endif
             
         default:
@@ -127,13 +128,11 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
         _pixelBuffer = CVPixelBufferRetain(pixelBuffer);
         _dimensions = (MTITextureDimensions){CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), 1};
         _sRGB = options.sRGB;
-        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor
-                                            texture2DDescriptorWithPixelFormat:MTIMTLPixelFormatForCVPixelFormatType(CVPixelBufferGetPixelFormatType(pixelBuffer), _sRGB)
-                                            width:CVPixelBufferGetWidth(_pixelBuffer)
-                                            height:CVPixelBufferGetHeight(_pixelBuffer)
-                                            mipmapped:NO];
-        descriptor.usage =  MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite;
-        _coreImageRendererDefaultTextureDescriptor = [descriptor newMTITextureDescriptor];
+        _coreImageRendererDefaultTextureDescriptor = [MTITextureDescriptor
+                                                      texture2DDescriptorWithPixelFormat:MTIMTLPixelFormatForCVPixelFormatType(CVPixelBufferGetPixelFormatType(pixelBuffer), _sRGB)
+                                                      width:CVPixelBufferGetWidth(_pixelBuffer)
+                                                      height:CVPixelBufferGetHeight(_pixelBuffer)
+                                                      usage:MTLTextureUsageShaderRead | MTLTextureUsageShaderWrite];
     }
     return self;
 }
@@ -150,7 +149,7 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
     return @[];
 }
 
-- (nullable MTIRenderPipeline *)colorConversionRenderPipelineWithColorAttachmentPixelFormat:(MTLPixelFormat)pixelFormat context:(MTIContext *)context error:(NSError **)inOutError {
+- (nullable MTIRenderPipeline *)colorConversionRenderPipelineWithColorAttachmentPixelFormat:(MTLPixelFormat)pixelFormat context:(MTIContext *)context error:(NSError * __autoreleasing *)inOutError {
     
     NSError *error;
     id<MTLFunction> vertexFunction = [context functionWithDescriptor:[[MTIFunctionDescriptor alloc] initWithName:MTIColorConversionVertexFunctionName] error:&error];
@@ -178,7 +177,7 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
     return [context renderPipelineWithDescriptor:renderPipelineDescriptor error:inOutError];
 }
 
-- (nullable MTIComputePipeline *)colorConversionComputePipelineWithContext:(MTIContext *)context error:(NSError **)inOutError {
+- (nullable MTIComputePipeline *)colorConversionComputePipelineWithContext:(MTIContext *)context error:(NSError * __autoreleasing *)inOutError {
     NSError *error;
     id<MTLFunction> computeFunction = [context functionWithDescriptor:[[MTIFunctionDescriptor alloc] initWithName:MTIColorConversionKernelFunctionName] error:&error];
     if (error) {
@@ -194,7 +193,7 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
     return [context computePipelineWithDescriptor:computePipelineDescriptor error:inOutError];
 }
 
-- (MTIImagePromiseRenderTarget *)resolveWithContext_CI:(MTIImageRenderingContext *)renderingContext error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIImagePromiseRenderTarget *)resolveWithContext_CI:(MTIImageRenderingContext *)renderingContext error:(NSError * __autoreleasing *)inOutError {
     if (self.coreImageRendererDefaultTextureDescriptor.pixelFormat == MTLPixelFormatInvalid) {
         NSError *error = MTIErrorCreate(MTIErrorUnsupportedCVPixelBufferFormat, nil);
         if (inOutError) {
@@ -237,12 +236,12 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
     return renderTarget;
 }
 
-- (MTIImagePromiseRenderTarget *)resolveWithContext_MTI:(MTIImageRenderingContext *)renderingContext error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIImagePromiseRenderTarget *)resolveWithContext_MTI:(MTIImageRenderingContext *)renderingContext error:(NSError * __autoreleasing *)inOutError {
     OSType pixelFormatType = CVPixelBufferGetPixelFormatType(self.pixelBuffer);
     switch (pixelFormatType) {
         case kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange:
         case kCVPixelFormatType_420YpCbCr8BiPlanarFullRange: {
-            if (MTIDeviceSupportsYCBCRPixelFormat(renderingContext.context.device)) {
+            if (renderingContext.context.isYCbCrPixelFormatSupported) {
                 MTLPixelFormat pixelFormat = self.sRGB ? MTIPixelFormatYCBCR8_420_2P_sRGB : MTIPixelFormatYCBCR8_420_2P;
                 NSError *error = nil;
                 MTLTextureDescriptor *textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:CVPixelBufferGetWidth(_pixelBuffer) height:CVPixelBufferGetHeight(_pixelBuffer) mipmapped:NO];
@@ -260,23 +259,23 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
             } else {
                 BOOL isFullYUVRange = (pixelFormatType == kCVPixelFormatType_420YpCbCr8BiPlanarFullRange ? YES : NO);
                 
-                ColorConversion const *preferredConversion = nil;
+                MTIYUVColorConversion const *preferredConversion = nil;
                 CFTypeRef colorAttachments = CVBufferGetAttachment(self.pixelBuffer, kCVImageBufferYCbCrMatrixKey, NULL);
                 if (colorAttachments != NULL) {
                     if (CFStringCompare(colorAttachments, kCVImageBufferYCbCrMatrix_ITU_R_601_4, kCFCompareCaseInsensitive) == kCFCompareEqualTo) {
                         if (isFullYUVRange) {
-                            preferredConversion = &kColorConversion601FullRange;
+                            preferredConversion = &MTIYUVColorConversion601FullRange;
                         } else {
-                            preferredConversion = &kColorConversion601;
+                            preferredConversion = &MTIYUVColorConversion601;
                         }
                     } else {
-                        preferredConversion = &kColorConversion709;
+                        preferredConversion = &MTIYUVColorConversion709;
                     }
                 } else {
                     if (isFullYUVRange) {
-                        preferredConversion = &kColorConversion601FullRange;
+                        preferredConversion = &MTIYUVColorConversion601FullRange;
                     } else {
-                        preferredConversion = &kColorConversion601;
+                        preferredConversion = &MTIYUVColorConversion601;
                     }
                 }
                 
@@ -307,14 +306,8 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
                 }
                 
                 // Render Pipeline
-                MTLPixelFormat pixelFormat = self.sRGB ? MTLPixelFormatBGRA8Unorm_sRGB : MTLPixelFormatBGRA8Unorm;
-                MTLTextureDescriptor *descriptor = [MTLTextureDescriptor
-                                                    texture2DDescriptorWithPixelFormat:pixelFormat
-                                                    width:CVPixelBufferGetWidth(_pixelBuffer)
-                                                    height:CVPixelBufferGetHeight(_pixelBuffer)
-                                                    mipmapped:NO];
-                descriptor.usage = MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget;
-                MTITextureDescriptor *textureDescriptor = [descriptor newMTITextureDescriptor];
+                MTLPixelFormat pixelFormat = MTLPixelFormatBGRA8Unorm;
+                MTITextureDescriptor *textureDescriptor = [MTITextureDescriptor texture2DDescriptorWithPixelFormat:pixelFormat width:CVPixelBufferGetWidth(_pixelBuffer) height:CVPixelBufferGetHeight(_pixelBuffer) usage:MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget];
                 MTIImagePromiseRenderTarget *renderTarget = [renderingContext.context newRenderTargetWithResuableTextureDescriptor:textureDescriptor error:&error];
                 if (error) {
                     if (inOutError) {
@@ -338,10 +331,12 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
                 
                 __auto_type renderCommandEncoder = [renderingContext.commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
                 [renderCommandEncoder setRenderPipelineState:renderPipeline.state];
-                [renderCommandEncoder setVertexBytes:colorConversionVertexData length:16*sizeof(float) atIndex:0];
+                [renderCommandEncoder setVertexBytes:MTIYUVColorConversionVertexData length:16*sizeof(float) atIndex:0];
                 [renderCommandEncoder setFragmentTexture:cvMetalTextureY.texture atIndex:0];
                 [renderCommandEncoder setFragmentTexture:cvMetalTextureCbCr.texture atIndex:1];
-                [renderCommandEncoder setFragmentBytes:preferredConversion length:sizeof(ColorConversion) atIndex:0];
+                [renderCommandEncoder setFragmentBytes:preferredConversion length:sizeof(MTIYUVColorConversion) atIndex:0];
+                bool convertToLinearRGB = self.sRGB;
+                [renderCommandEncoder setFragmentBytes:&convertToLinearRGB length:sizeof(convertToLinearRGB) atIndex:1];
                 [renderCommandEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4 instanceCount:1];
                 [renderCommandEncoder endEncoding];
                 
@@ -369,12 +364,37 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
                 }
                 return nil;
             }
+            
+            #if TARGET_OS_IPHONE
+            //Workaround for #64. See https://github.com/MetalPetal/MetalPetal/issues/64
+            if (![renderingContext.context.device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily2_v1]) {
+                NSError *error;
+                MTIImagePromiseRenderTarget *renderTarget = [renderingContext.context newRenderTargetWithResuableTextureDescriptor:textureDescriptor.newMTITextureDescriptor error:&error];
+                if (error) {
+                    if (inOutError) {
+                        *inOutError = error;
+                    }
+                    return nil;
+                }
+                id<MTLBlitCommandEncoder> commandEncoder = [renderingContext.commandBuffer blitCommandEncoder];
+                if (!commandEncoder) {
+                    if (inOutError) {
+                        *inOutError = MTIErrorCreate(MTIErrorFailedToCreateCommandEncoder, nil);
+                    }
+                    return nil;
+                }
+                [commandEncoder copyFromTexture:cvMetalTexture.texture sourceSlice:0 sourceLevel:0 sourceOrigin:MTLOriginMake(0, 0, 0) sourceSize:MTLSizeMake(cvMetalTexture.texture.width, cvMetalTexture.texture.height, cvMetalTexture.texture.depth) toTexture:renderTarget.texture destinationSlice:0 destinationLevel:0 destinationOrigin:MTLOriginMake(0, 0, 0)];
+                [commandEncoder endEncoding];
+                return renderTarget;
+            }
+            #endif
+            
             return [renderingContext.context newRenderTargetWithTexture:cvMetalTexture.texture];
         } break;
     }
 }
 
-- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * __autoreleasing *)inOutError {
     switch (self.renderingAPI) {
         case MTICVPixelBufferRenderingAPIMetalPetal:
             return [self resolveWithContext_MTI:renderingContext error:inOutError];
@@ -433,7 +453,7 @@ static MTLPixelFormat MTIMTLPixelFormatForCVPixelFormatType(OSType type, BOOL sR
     return self;
 }
 
-- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIImagePromiseRenderTarget *)resolveWithContext:(MTIImageRenderingContext *)renderingContext error:(NSError * __autoreleasing *)inOutError {
     NSError *error;
     id<MTICVMetalTexture> cvMetalTexture = [renderingContext.context.coreVideoTextureBridge newTextureWithCVImageBuffer:_pixelBuffer textureDescriptor:self.textureDescriptor planeIndex:self.planeIndex error:&error];
     if (cvMetalTexture) {

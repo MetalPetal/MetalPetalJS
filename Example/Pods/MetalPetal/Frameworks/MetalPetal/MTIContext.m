@@ -21,6 +21,7 @@
 #import "MTICVMetalTextureCache.h"
 #import "MTICVMetalTextureBridge.h"
 #import "MTILock.h"
+#import "MTIPixelFormat.h"
 #import <MetalPerformanceShaders/MetalPerformanceShaders.h>
 
 NSString * const MTIContextDefaultLabel = @"MetalPetal";
@@ -29,11 +30,14 @@ NSString * const MTIContextDefaultLabel = @"MetalPetal";
 
 - (instancetype)init {
     if (self = [super init]) {
-        _coreImageContextOptions = @{};
+        _coreImageContextOptions = nil;
         _workingPixelFormat = MTLPixelFormatBGRA8Unorm;
-        _enablesRenderGraphOptimization = YES;
+        _enablesRenderGraphOptimization = NO;
+        _enablesYCbCrPixelFormatSupport = YES;
         _automaticallyReclaimResources = YES;
         _label = MTIContextDefaultLabel;
+        _defaultLibraryURL = MTIDefaultLibraryURLForBundle([NSBundle bundleForClass:self.class]);
+        _textureLoaderClass = MTIContextOptions.defaultTextureLoaderClass;
     }
     return self;
 }
@@ -45,13 +49,58 @@ NSString * const MTIContextDefaultLabel = @"MetalPetal";
     options.enablesRenderGraphOptimization = _enablesRenderGraphOptimization;
     options.automaticallyReclaimResources = _automaticallyReclaimResources;
     options.label = _label;
+    options.defaultLibraryURL = _defaultLibraryURL;
+    options.textureLoaderClass = _textureLoaderClass;
     return options;
+}
+
+static Class _defaultTextureLoaderClass = nil;
+
++ (void)setDefaultTextureLoaderClass:(Class<MTITextureLoader>)defaultTextureLoaderClass {
+    _defaultTextureLoaderClass = defaultTextureLoaderClass;
+}
+
++ (Class<MTITextureLoader>)defaultTextureLoaderClass {
+    return _defaultTextureLoaderClass ?: MTKTextureLoader.class;
 }
 
 @end
 
+
 NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     return [bundle URLForResource:@"default" withExtension:@"metallib"];
+}
+
+
+static void _MTIContextInstancesTracking(void (^action)(NSPointerArray *instances)) {
+    static NSPointerArray * _MTIContextAllInstances;
+    static id<MTILocking> _MTIContextAllInstancesAccessLock;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _MTIContextAllInstances = [[NSPointerArray alloc] initWithOptions:NSPointerFunctionsWeakMemory|NSPointerFunctionsObjectPointerPersonality];
+        _MTIContextAllInstancesAccessLock = MTILockCreate();
+    });
+    [_MTIContextAllInstancesAccessLock lock];
+    action(_MTIContextAllInstances);
+    [_MTIContextAllInstancesAccessLock unlock];
+}
+
+static void MTIContextMarkInstanceCreation(MTIContext *context) {
+    _MTIContextInstancesTracking(^(NSPointerArray *instances){
+        [instances addPointer:(__bridge void *)(context)];
+        [instances addPointer:nil];
+        [instances compact];
+    });
+}
+
+static void MTIContextEnumerateAllInstances(void (^enumerator)(MTIContext *context)) {
+    _MTIContextInstancesTracking(^(NSPointerArray *instances){
+        for (MTIContext *context in instances) {
+            if (context) {
+                enumerator(context);
+            }
+        }
+    });
 }
 
 @interface MTIContext()
@@ -70,11 +119,15 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
 @property (nonatomic, strong, readonly) NSMapTable<id<MTIKernel>, id> *kernelStateMap;
 
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MTIWeakToStrongObjectsMapTable *> *promiseKeyValueTables;
+@property (nonatomic, strong, readonly) id<MTILocking> promiseKeyValueTablesLock;
+
 @property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, MTIWeakToStrongObjectsMapTable *> *imageKeyValueTables;
+@property (nonatomic, strong, readonly) id<MTILocking> imageKeyValueTablesLock;
+
+@property (nonatomic, strong, readonly) NSMapTable<id<MTIImagePromise>, MTIImagePromiseRenderTarget *> *promiseRenderTargetTable;
+@property (nonatomic, strong, readonly) id<MTILocking> promiseRenderTargetTableLock;
 
 @property (nonatomic, strong, readonly) id<MTILocking> renderingLock;
-@property (nonatomic, strong, readonly) id<MTILocking> imageKeyValueTablesLock;
-@property (nonatomic, strong, readonly) id<MTILocking> promiseKeyValueTablesLock;
 
 @end
 
@@ -84,9 +137,10 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     [MTIMemoryWarningObserver removeMemoryWarningHandler:self];
 }
 
-- (instancetype)initWithDevice:(id<MTLDevice>)device options:(MTIContextOptions *)options error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (instancetype)initWithDevice:(id<MTLDevice>)device options:(MTIContextOptions *)options error:(NSError * __autoreleasing *)inOutError {
     if (self = [super init]) {
-        NSParameterAssert(device != nil);
+        NSParameterAssert(device);
+        NSParameterAssert(options);
         if (!device) {
             if (inOutError) {
                 *inOutError = MTIErrorCreate(MTIErrorDeviceNotFound, nil);
@@ -95,8 +149,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
         }
         
         NSError *libraryError = nil;
-        NSURL *url = MTIDefaultLibraryURLForBundle([NSBundle bundleForClass:self.class]);
-        id<MTLLibrary> defaultLibrary = [device newLibraryWithFile:url.path error:&libraryError];
+        id<MTLLibrary> defaultLibrary = [device newLibraryWithFile:options.defaultLibraryURL.path error:&libraryError];
         if (!defaultLibrary || libraryError) {
             if (inOutError) {
                 *inOutError = libraryError;
@@ -114,8 +167,11 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
         _commandQueue.label = options.label;
         
         _isMetalPerformanceShadersSupported = MPSSupportsMTLDevice(device);
+        _isYCbCrPixelFormatSupported = options.enablesYCbCrPixelFormatSupport && MTIDeviceSupportsYCBCRPixelFormat(device);
         
-        _textureLoader = [[MTKTextureLoader alloc] initWithDevice:device];
+        _textureLoader = [options.textureLoaderClass newTextureLoaderWithDevice:device];
+        NSAssert(_textureLoader != nil, @"Cannot create texture loader.");
+        
         _texturePool = [[MTITexturePool alloc] initWithDevice:device];
         _libraryCache = [NSMutableDictionary dictionary];
         _functionCache = [NSMutableDictionary dictionary];
@@ -123,8 +179,17 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
         _computePipelineCache = [NSMutableDictionary dictionary];
         _samplerStateCache = [NSMutableDictionary dictionary];
         _kernelStateMap = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality valueOptions:NSMapTableStrongMemory capacity:0];
+
         _promiseKeyValueTables = [NSMutableDictionary dictionary];
+        _promiseKeyValueTablesLock = MTILockCreate();
+
         _imageKeyValueTables = [NSMutableDictionary dictionary];
+        _imageKeyValueTablesLock = MTILockCreate();
+        
+        _promiseRenderTargetTable = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsWeakMemory|NSPointerFunctionsObjectPointerPersonality valueOptions:NSPointerFunctionsWeakMemory capacity:0];
+        _promiseRenderTargetTableLock = MTILockCreate();
+        
+        _renderingLock = MTILockCreate();
         
         if (@available(iOS 11_0, macOS 10_11, *)) {
             _coreVideoTextureBridge = [[MTICVMetalTextureBridge alloc] initWithDevice:device];
@@ -139,18 +204,16 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
             }
         }
         
-        _renderingLock = MTILockCreate();
-        _promiseKeyValueTablesLock = MTILockCreate();
-        _imageKeyValueTablesLock = MTILockCreate();
-        
         if (options.automaticallyReclaimResources) {
             [MTIMemoryWarningObserver addMemoryWarningHandler:self];
         }
+        
+        MTIContextMarkInstanceCreation(self);
     }
     return self;
 }
 
-- (instancetype)initWithDevice:(id<MTLDevice>)device error:(NSError * _Nullable __autoreleasing * _Nullable)error {
+- (instancetype)initWithDevice:(id<MTLDevice>)device error:(NSError * __autoreleasing *)error {
     return [self initWithDevice:device options:[[MTIContextOptions alloc] init] error:error];
 }
 
@@ -168,6 +231,10 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     [_texturePool flush];
     
     [_coreVideoTextureBridge flushCache];
+    
+    if (@available(iOS 10.0, *)) {
+        [_coreImageContext clearCaches];
+    }
     
     [_imageKeyValueTablesLock lock];
     for (NSString *key in _imageKeyValueTables) {
@@ -190,6 +257,10 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     return self.texturePool.idleResourceCount;
 }
 
++ (void)enumerateAllInstances:(void (^)(MTIContext * _Nonnull))enumerator {
+    MTIContextEnumerateAllInstances(enumerator);
+}
+
 @end
 
 #pragma mark - MTIImagePromiseRenderTarget
@@ -198,7 +269,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
 
 @property (nonatomic,strong) id<MTLTexture> nonreusableTexture;
 
-@property (nonatomic,strong) MTIReusableTexture *resuableTexture;
+@property (nonatomic,strong) MTIReusableTexture *reusableTexture;
 
 @end
 
@@ -207,7 +278,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
 - (instancetype)initWithTexture:(id<MTLTexture>)texture {
     if (self = [super init]) {
         _nonreusableTexture = texture;
-        _resuableTexture = nil;
+        _reusableTexture = nil;
     }
     return self;
 }
@@ -215,7 +286,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
 - (instancetype)initWithResuableTexture:(MTIReusableTexture *)texture {
     if (self = [super init]) {
         _nonreusableTexture = nil;
-        _resuableTexture = texture;
+        _reusableTexture = texture;
     }
     return self;
 }
@@ -224,18 +295,18 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     if (_nonreusableTexture) {
         return _nonreusableTexture;
     }
-    return _resuableTexture.texture;
+    return _reusableTexture.texture;
 }
 
 - (BOOL)retainTexture {
     if (_nonreusableTexture) {
         return YES;
     }
-    return [_resuableTexture retainTexture];
+    return [_reusableTexture retainTexture];
 }
 
 - (void)releaseTexture {
-    [_resuableTexture releaseTexture];
+    [_reusableTexture releaseTexture];
 }
 
 @end
@@ -250,7 +321,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
     return [[MTIImagePromiseRenderTarget alloc] initWithTexture:texture];
 }
 
-- (MTIImagePromiseRenderTarget *)newRenderTargetWithResuableTextureDescriptor:(MTITextureDescriptor *)textureDescriptor error:(NSError * _Nullable __autoreleasing * _Nullable)error {
+- (MTIImagePromiseRenderTarget *)newRenderTargetWithResuableTextureDescriptor:(MTITextureDescriptor *)textureDescriptor error:(NSError * __autoreleasing *)error {
     MTIReusableTexture *texture = [self.texturePool newTextureWithDescriptor:textureDescriptor error:error];
     if (!texture) {
         return nil;
@@ -272,7 +343,7 @@ NSURL * MTIDefaultLibraryURLForBundle(NSBundle *bundle) {
 
 static NSString * const MTIContextRenderingLockNotLockedErrorDescription = @"Context is peformaning a render-releated operation without aquiring the renderingLock.";
 
-- (id<MTLLibrary>)libraryWithURL:(NSURL *)URL error:(NSError * _Nullable __autoreleasing *)error {
+- (id<MTLLibrary>)libraryWithURL:(NSURL *)URL error:(NSError * __autoreleasing *)error {
     NSAssert([self.renderingLock tryLock] == NO, MTIContextRenderingLockNotLockedErrorDescription);
     id<MTLLibrary> library = self.libraryCache[URL];
     if (!library) {
@@ -349,7 +420,7 @@ static NSString * const MTIContextRenderingLockNotLockedErrorDescription = @"Con
     return renderPipeline;
 }
 
-- (MTIComputePipeline *)computePipelineWithDescriptor:(MTLComputePipelineDescriptor *)computePipelineDescriptor error:(NSError * _Nullable __autoreleasing *)inOutError {
+- (MTIComputePipeline *)computePipelineWithDescriptor:(MTLComputePipelineDescriptor *)computePipelineDescriptor error:(NSError * __autoreleasing *)inOutError {
     NSAssert([self.renderingLock tryLock] == NO, MTIContextRenderingLockNotLockedErrorDescription);
     MTIComputePipeline *computePipeline = self.computePipelineCache[computePipelineDescriptor];
     if (!computePipeline) {
@@ -370,7 +441,7 @@ static NSString * const MTIContextRenderingLockNotLockedErrorDescription = @"Con
     return computePipeline;
 }
 
-- (id)kernelStateForKernel:(id<MTIKernel>)kernel configuration:(id<MTIKernelConfiguration>)configuration error:(NSError * _Nullable __autoreleasing *)error {
+- (id)kernelStateForKernel:(id<MTIKernel>)kernel configuration:(id<MTIKernelConfiguration>)configuration error:(NSError * __autoreleasing *)error {
     NSAssert([self.renderingLock tryLock] == NO, MTIContextRenderingLockNotLockedErrorDescription);
     NSMutableDictionary *states = [self.kernelStateMap objectForKey:kernel];
     id<NSCopying> cacheKey = configuration.identifier ?: [NSNull null];
@@ -388,7 +459,7 @@ static NSString * const MTIContextRenderingLockNotLockedErrorDescription = @"Con
     return cachedState;
 }
 
-- (nullable id<MTLSamplerState>)samplerStateWithDescriptor:(MTISamplerDescriptor *)descriptor error:(NSError **)error {
+- (nullable id<MTLSamplerState>)samplerStateWithDescriptor:(MTISamplerDescriptor *)descriptor error:(NSError * __autoreleasing *)error {
     NSAssert([self.renderingLock tryLock] == NO, MTIContextRenderingLockNotLockedErrorDescription);
     id<MTLSamplerState> state = self.samplerStateCache[descriptor];
     if (!state) {
@@ -438,6 +509,22 @@ static NSString * const MTIContextRenderingLockNotLockedErrorDescription = @"Con
     }
     [table setObject:value forKey:image];
     [_imageKeyValueTablesLock unlock];
+}
+
+- (void)setRenderTarget:(MTIImagePromiseRenderTarget *)renderTarget forPromise:(id<MTIImagePromise>)promise {
+    NSParameterAssert(promise);
+    NSParameterAssert(renderTarget);
+    [_promiseRenderTargetTableLock lock];
+    [_promiseRenderTargetTable setObject:renderTarget forKey:promise];
+    [_promiseRenderTargetTableLock unlock];
+}
+
+- (MTIImagePromiseRenderTarget *)renderTargetForPromise:(id<MTIImagePromise>)promise {
+    NSParameterAssert(promise);
+    [_promiseRenderTargetTableLock lock];
+    MTIImagePromiseRenderTarget *renderTarget = [_promiseRenderTargetTable objectForKey:promise];
+    [_promiseRenderTargetTableLock unlock];
+    return renderTarget;
 }
 
 @end
