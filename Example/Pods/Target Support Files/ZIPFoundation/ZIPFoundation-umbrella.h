@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_MetalPetalJS_TestsVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_MetalPetalJS_TestsVersionString[];
+FOUNDATION_EXPORT double ZIPFoundationVersionNumber;
+FOUNDATION_EXPORT const unsigned char ZIPFoundationVersionString[];
 

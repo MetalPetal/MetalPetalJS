@@ -1,18 +1,13 @@
-(function () {
-    console.log(MTIImage);
-
-    var kernel = MTIRenderPipelineKernel.build({
-        fragmentFunction: { 
-            name: "shader", 
-            library: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "default.metallib") 
-        },
-        vertexFunction: {
-            name: "passthroughVertex" 
-        }
-    });
-
-    var image = MTIImage.build({
-        filePath: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "test.jpg"),
+function render(image, options) {
+    
+    var filter = MTINativeFilter("MTIMPSBoxBlurFilter");
+    filter.size$int2 = MTIVector.fromIntValues([5,5]);
+    filter.inputImage = image;
+    
+    var blurredImage = filter.outputImage;
+    
+    var maskImage = MTIImage.build({
+        filePath: MTIJSUtilities.joinPath(MTIJSEnvironment.mainBundlePath, "mask.png"),
         options: { MTKTextureLoaderOptionSRGB: false },
         alphaType: MTIAlphaType.alphaIsOne
     });
@@ -21,20 +16,30 @@
         name: "MTIBlendFilter",
         options: {"blendMode": "Multiply"}
     });
- 
-    var filter = MTINativeFilter("MTIMPSBoxBlurFilter");
-    filter.size$int2 = MTIVector.fromIntValues([20,20]);
-    filter.inputImage = image;
     
-    var blurredImage = filter.outputImage;
+    blendFilter.intensity = 1.0;
+    blendFilter.inputBackgroundImage = blurredImage;
+    blendFilter.inputImage = maskImage;
+    
+    var vignetteImage = blendFilter.outputImage;
 
     var geometry = MTIVertices.fullViewportSquareVertices();
 
+    var kernel = MTIRenderPipelineKernel.build({
+        fragmentFunction: {
+            name: "shader",
+            library: MTIJSUtilities.joinPath(options.resourcePath, "default.metallib")
+        },
+        vertexFunction: {
+            name: "passthroughVertex"
+        }
+    });
+    
     var command = MTIRenderCommand.build({
         kernel,
         geometry,
-        images: [blurredImage],
-        parameters: {}
+        images: [vignetteImage],
+        parameters: {"offset": MTIVector.vectorWithFloatValues([0.008]) }
     });
 
     var descriptor = MTIRenderPassOutputDescriptor.build({
@@ -43,9 +48,9 @@
     });
 
     var outputImage = MTIRenderCommand.perform({
-        commands: [command], 
+        commands: [command],
         outputDescriptors: [descriptor]
     })[0];
 
     return outputImage;
-})();
+}

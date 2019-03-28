@@ -4,13 +4,16 @@ PODS:
   - MetalPetal/Core (1.4.0)
   - MetalPetalJS (0.1.0):
     - MetalPetal
+  - ZIPFoundation (0.9.8)
 
 DEPENDENCIES:
   - MetalPetalJS (from `../`)
+  - ZIPFoundation
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - MetalPetal
+    - ZIPFoundation
 
 EXTERNAL SOURCES:
   MetalPetalJS:
@@ -19,7 +22,8 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   MetalPetal: 92eea965b9b2f0c677d82618c2e78fa7e4347846
   MetalPetalJS: 1e77efce45a497c59ebb09e34fcba00a40ff3950
+  ZIPFoundation: b1f07e4409baf1641f3fe5948b2a1c3f5c500cb1
 
-PODFILE CHECKSUM: 3dc712f8046fdc8b89c58c5689301050200676f8
+PODFILE CHECKSUM: c3412dc6ebc59ce2634c44fc54a282335e01067b
 
 COCOAPODS: 1.7.0.beta.2

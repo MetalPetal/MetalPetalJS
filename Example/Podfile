@@ -4,10 +4,5 @@ use_frameworks!
 
 target 'MetalPetalJS_Example' do
   pod 'MetalPetalJS', :path => '../'
-
-  target 'MetalPetalJS_Tests' do
-    inherit! :search_paths
-
-    
-  end
+  pod 'ZIPFoundation'
 end
