@@ -14,7 +14,7 @@ In the zip archive:
 
   The javascript file contains the render logic of this demo.
   
-- default.metablib
+- default.metallib
   
   The metal shader library contains the following shader code:
 
